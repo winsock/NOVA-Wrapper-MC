@@ -20,7 +20,7 @@ import java.util.Set;
  *
  * @author Calclavia
  */
-public class StoreUtility {
+public class DataUtility {
 
 	/**
 	 * Converts a Map of objects into NBT.

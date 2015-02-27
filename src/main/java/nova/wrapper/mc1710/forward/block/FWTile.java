@@ -13,7 +13,7 @@ import nova.core.util.components.Updater;
 import nova.core.util.transform.Vector3i;
 import nova.wrapper.mc1710.backward.world.BWWorld;
 import nova.wrapper.mc1710.network.netty.MCNetworkManager;
-import nova.wrapper.mc1710.util.StoreUtility;
+import nova.wrapper.mc1710.util.DataUtility;
 
 import java.util.Optional;
 import java.util.concurrent.ExecutorService;
@@ -167,7 +167,7 @@ public class FWTile extends TileEntity {
 			if (block instanceof Storable) {
 				Data data = new Data();
 				((Storable) block).save(data);
-				nbt.setTag("nova", StoreUtility.dataToNBT(data));
+				nbt.setTag("nova", DataUtility.dataToNBT(data));
 			}
 		}
 	}
@@ -181,6 +181,6 @@ public class FWTile extends TileEntity {
 		 * we must wait until the block is injected with World and Position data using Future.
 		 */
 		blockID = nbt.getString("novaID");
-		cacheData = StoreUtility.nbtToData(nbt.getCompoundTag("nova"));
+		cacheData = DataUtility.nbtToData(nbt.getCompoundTag("nova"));
 	}
 }

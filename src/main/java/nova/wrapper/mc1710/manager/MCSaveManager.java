@@ -10,7 +10,7 @@ import net.minecraftforge.event.world.WorldEvent;
 import nova.core.retention.Data;
 import nova.core.retention.Storable;
 import nova.core.util.SaveManager;
-import nova.wrapper.mc1710.util.StoreUtility;
+import nova.wrapper.mc1710.util.DataUtility;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -39,13 +39,13 @@ public class MCSaveManager extends SaveManager {
 	public void save(String filename, Storable storable) {
 		Data saveMap = new Data();
 		storable.save(saveMap);
-		saveFile(filename, StoreUtility.dataToNBT(saveMap));
+		saveFile(filename, DataUtility.dataToNBT(saveMap));
 	}
 
 	@Override
 	public void load(String filename, Storable storable) {
 		NBTTagCompound nbt = loadFile(filename);
-		storable.load(StoreUtility.nbtToData(nbt));
+		storable.load(DataUtility.nbtToData(nbt));
 	}
 
 	/**

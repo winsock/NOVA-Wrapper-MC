@@ -1,9 +1,8 @@
 package nova.wrapper.mc1710.item;
 
-import java.util.Arrays;
-import java.util.Optional;
-import java.util.Set;
-
+import com.google.common.collect.HashBiMap;
+import cpw.mods.fml.common.FMLCommonHandler;
+import cpw.mods.fml.common.registry.GameRegistry;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -18,13 +17,12 @@ import nova.core.util.Category;
 import nova.core.util.exception.NovaException;
 import nova.wrapper.mc1710.forward.block.BlockWrapperRegistry;
 import nova.wrapper.mc1710.launcher.NovaMinecraft;
+import nova.wrapper.mc1710.util.DataUtility;
 import nova.wrapper.mc1710.util.ModCreativeTab;
-import nova.wrapper.mc1710.util.StoreUtility;
 
-import com.google.common.collect.HashBiMap;
-
-import cpw.mods.fml.common.FMLCommonHandler;
-import cpw.mods.fml.common.registry.GameRegistry;
+import java.util.Arrays;
+import java.util.Optional;
+import java.util.Set;
 
 /**
  * @author Calclavia, Stan Hebben
@@ -73,7 +71,7 @@ public class ItemWrapperRegistry {
 	 */
 	public net.minecraft.item.ItemStack updateMCItemStack(ItemStack itemStack, nova.core.item.Item item) {
 		itemStack.stackSize = item.count();
-		itemStack.setTagCompound(StoreUtility.dataToNBT(item.factory().saveItem(item)));
+		itemStack.setTagCompound(DataUtility.dataToNBT(item.factory().saveItem(item)));
 		return itemStack;
 	}
 
@@ -102,7 +100,7 @@ public class ItemWrapperRegistry {
 				itemFactory = registerMinecraftMapping(itemStack.getItem(), itemStack.getItemDamage());
 			}
 
-			Data data = StoreUtility.nbtToData(itemStack.getTagCompound());
+			Data data = DataUtility.nbtToData(itemStack.getTagCompound());
 			if (!itemStack.getHasSubtypes() && itemStack.getItemDamage() > 0) {
 				if (data == null) {
 					data = new Data();
