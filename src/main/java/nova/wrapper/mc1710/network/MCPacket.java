@@ -1,8 +1,8 @@
 package nova.wrapper.mc1710.network;
 
-import cpw.mods.fml.common.network.ByteBufUtils;
 import io.netty.buffer.ByteBuf;
 import nova.core.network.Packet;
+import cpw.mods.fml.common.network.ByteBufUtils;
 
 /**
  * Wraps ByteBuf into a NOVA Packet.
@@ -136,5 +136,9 @@ public class MCPacket implements Packet {
 	@Override
 	public String readString() {
 		return ByteBufUtils.readUTF8String(buf);
+	}
+
+	public void writeTo(ByteBuf other) {
+		buf.writeBytes(other);
 	}
 }

@@ -1,22 +1,29 @@
 package nova.wrapper.mc1710.backward.gui;
 
-import io.netty.buffer.Unpooled;
-
 import java.util.ArrayList;
 import java.util.List;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.inventory.Container;
+import nova.core.entity.Entity;
 import nova.core.game.Game;
 import nova.core.gui.Gui;
 import nova.core.gui.GuiComponent;
+import nova.core.gui.GuiEvent.MouseEvent.EnumMouseButton;
 import nova.core.gui.Outline;
 import nova.core.gui.nativeimpl.NativeGui;
 import nova.core.gui.render.Graphics;
 import nova.core.gui.render.TextRenderer;
 import nova.core.network.Packet;
-import nova.wrapper.mc1710.network.MCPacket;
+import nova.core.util.transform.Vector3i;
+import nova.wrapper.mc1710.network.discriminator.PacketGui;
+import nova.wrapper.mc1710.network.netty.MCNetworkManager;
+
+import org.lwjgl.input.Keyboard;
+
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
@@ -31,6 +38,7 @@ public class MCGui implements NativeGui, DrawableGuiComponent {
 	
 	@SideOnly(Side.CLIENT)
 	private MCGuiScreen guiScreen;
+	private MCContainer container;
 
 	public MCGui(Gui component) {
 		this.component = component;
@@ -39,14 +47,24 @@ public class MCGui implements NativeGui, DrawableGuiComponent {
 			guiScreen = new MCGuiScreen();
 		}
 	}
-	
+
 	@SideOnly(Side.CLIENT)
 	public MCGuiScreen getGuiScreen() {
 		return guiScreen;
 	}
 
+	public MCContainer getContainer() {
+		return container;
+	}
+
 	@Override
-	public GuiComponent<?, ?> getComponent() {
+	public void bind(Entity entity, Vector3i pos) {
+		// Create a new container instance because containers aren't state safe.
+		container = new MCContainer();
+	}
+
+	@Override
+	public Gui getComponent() {
 		return component;
 	}
 	
@@ -76,18 +94,27 @@ public class MCGui implements NativeGui, DrawableGuiComponent {
 	}
 
 	@Override
-	public Packet createPacket() {
-		return new MCPacket(Unpooled.buffer());
-	}
-
-	@Override
 	public void dispatchNetworkEvent(Packet packet) {
-		// TODO Packets
+		// TODO I think the NetworkManager should be able to do this
+		MCNetworkManager manager = (MCNetworkManager) Game.instance.networkManager;
+		manager.sendToServer(new PacketGui(packet));
 	}
 
 	@Override
 	public void draw(int mouseX, int mouseY, float partial, Graphics graphics) {
 		guiScreen.drawScreen(mouseX, mouseY, partial);
+	}
+
+	public class MCContainer extends Container {
+
+		@Override
+		public boolean canInteractWith(EntityPlayer player) {
+			return true;
+		}
+
+		public MCGui getGui() {
+			return MCGui.this;
+		}
 	}
 
 	@SideOnly(Side.CLIENT)
@@ -102,10 +129,38 @@ public class MCGui implements NativeGui, DrawableGuiComponent {
 			graphics.getCanvas().translate(-outline.x1i(), -outline.y1i());
 		}
 
-		@SuppressWarnings("deprecation")
 		@Override
-		public void onGuiClosed() {
-			Game.instance.guiFactory.unbindCurrentGui();
+		protected void mouseClicked(int mouseX, int mouseY, int button) {
+			onMousePressed(mouseX, mouseY, getMouseButton(button), true);
+		}
+
+		@Override
+		protected void mouseMovedOrUp(int mouseX, int mouseY, int button) {
+			onMousePressed(mouseX, mouseY, getMouseButton(button), false);
+		}
+
+		private EnumMouseButton getMouseButton(int button) {
+			switch (button) {
+				case 0:
+				default:
+					return EnumMouseButton.LEFT;
+				case 1:
+					return EnumMouseButton.RIGHT;
+				case 2:
+					return EnumMouseButton.MIDDLE;
+			}
+		}
+
+		@Override
+		public void handleKeyboardInput() {
+			boolean state = Keyboard.getEventKeyState();
+			int key = Keyboard.getEventKey();
+			char ch = Keyboard.getEventCharacter();
+			onKeyPressed(Game.instance.keyManager.getKey(key), ch, state);
+			if (state)
+				keyTyped(ch, key);
+
+			this.mc.func_152348_aa();
 		}
 
 		@Override
@@ -128,6 +183,10 @@ public class MCGui implements NativeGui, DrawableGuiComponent {
 
 			if (resized)
 				onResized(oldOutline);
+		}
+
+		public MCGui getGui() {
+			return MCGui.this;
 		}
 	}
 }

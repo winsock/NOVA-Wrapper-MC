@@ -5,6 +5,8 @@ import java.util.Optional;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import nova.core.gui.GuiComponent;
+import nova.core.gui.GuiEvent.MouseEvent;
+import nova.core.gui.GuiEvent.MouseEvent.EnumMouseState;
 import nova.core.gui.Outline;
 import nova.core.gui.components.Button;
 import nova.core.gui.nativeimpl.NativeButton;
@@ -28,6 +30,8 @@ public class MCButton implements NativeButton, DrawableGuiComponent {
 		if (FMLCommonHandler.instance().getSide().isClient()) {
 			button = new MCGuiButton();
 		}
+
+		component.registerListener(this::onMousePressed, MouseEvent.class);
 	}
 
 	@Override
@@ -61,7 +65,7 @@ public class MCButton implements NativeButton, DrawableGuiComponent {
 	@Override
 	public Optional<Vector2i> getMinimumSize() {
 		FontRenderer fontRenderer = Minecraft.getMinecraft().fontRenderer;
-		return Optional.of(new Vector2i(fontRenderer.getStringWidth(button.displayString) + 10, fontRenderer.FONT_HEIGHT + 10));
+		return fontRenderer != null ? Optional.of(new Vector2i(fontRenderer.getStringWidth(button.displayString) + 10, fontRenderer.FONT_HEIGHT + 10)) : Optional.empty();
 	}
 
 	@Override
@@ -89,6 +93,16 @@ public class MCButton implements NativeButton, DrawableGuiComponent {
 		graphics.getCanvas().translate(outline.x1i(), outline.y1i());
 		getComponent().render(mouseX, mouseY, graphics);
 		graphics.getCanvas().translate(-outline.x1i(), -outline.y1i());
+	}
+
+	public void onMousePressed(MouseEvent event) {
+		if (event.state == EnumMouseState.DOWN) {
+			if (button.mousePressed(Minecraft.getMinecraft(), event.mouseX, event.mouseY)) {
+				button.func_146113_a(Minecraft.getMinecraft().getSoundHandler());
+			}
+		} else if (event.state == EnumMouseState.UP) {
+			button.mouseReleased(event.mouseX, event.mouseY);
+		}
 	}
 
 	@SideOnly(Side.CLIENT)
