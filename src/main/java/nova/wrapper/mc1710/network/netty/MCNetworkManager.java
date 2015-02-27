@@ -15,6 +15,7 @@ import nova.core.block.Block;
 import nova.core.entity.Entity;
 import nova.core.network.NetworkManager;
 import nova.core.network.PacketHandler;
+import nova.core.util.exception.NovaException;
 import nova.core.util.transform.Vector3d;
 import nova.core.util.transform.Vector3i;
 import nova.wrapper.mc1710.forward.entity.FWEntity;
@@ -44,32 +45,37 @@ public class MCNetworkManager extends NetworkManager {
 		return new MCPacket(Unpooled.buffer());
 	}
 
-	/**
-	 * Syncs a block's packet data.
-	 */
 	@Override
-	protected void syncBlock(int id, nova.core.network.PacketHandler sender) {
-		sendToAll(getBlockPacket(id, sender));
+	public void sendPacket(PacketHandler sender, nova.core.network.Packet packet) {
+		if (sender instanceof Block) {
+			Vector3i position = ((Block) sender).position();
+			PacketBlock discriminator = new PacketBlock(position.xi(), position.yi(), position.zi());
+			//Write packet ID
+			discriminator.data.writeInt(packet.getID());
+			discriminator.data.writeBytes(((MCPacket) packet).buf);
+			sendToAll(discriminator);
+			return;
+		}/* else if (sender instanceof Item) {
+			return;
+		}*/ else if (sender instanceof Entity) {
+			Entity entity = (Entity) sender;
+			PacketEntity discriminator = new PacketEntity((FWEntity) entity.wrapper);
+			//Write packet ID
+			discriminator.data.writeInt(packet.getID());
+			discriminator.data.writeBytes(((MCPacket) packet).buf);
+			sendToAll(discriminator);
+			return;
+		}
+
+		throw new NovaException("Fail to send packet as the PacketHandler is of invalid type.");
 	}
 
 	@Override
-	protected void syncItem(int id, PacketHandler sender) {
-		//TODO: Handle item sync
-	}
-
-	@Override
-	protected void syncEntity(int id, PacketHandler sender) {
-		sendToAll(getEntityPacket(id, sender));
-	}
-
-	public PacketEntity getEntityPacket(int id, PacketHandler sender) {
-		Entity entity = (Entity) sender;
-		PacketEntity discriminator = new PacketEntity((FWEntity) entity.wrapper);
-		MCPacket mcPacket = new MCPacket(discriminator.data);
-		mcPacket.setID(id);
-		sender.write(mcPacket);
-		return discriminator;
-
+	public void sync(int id, PacketHandler sender) {
+		nova.core.network.Packet packet = newPacket();
+		packet.setID(id);
+		sender.write(packet);
+		sendPacket(sender, packet);
 	}
 
 	public PacketBlock getBlockPacket(int id, PacketHandler sender) {

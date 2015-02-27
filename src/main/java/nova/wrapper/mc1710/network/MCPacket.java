@@ -11,7 +11,7 @@ import nova.core.network.Packet;
  */
 public class MCPacket implements Packet {
 
-	private final ByteBuf buf;
+	public final ByteBuf buf;
 	private int id = 0;
 
 	public MCPacket(ByteBuf buf) {
