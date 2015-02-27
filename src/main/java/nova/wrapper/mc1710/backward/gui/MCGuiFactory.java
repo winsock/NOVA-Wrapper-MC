@@ -1,5 +1,7 @@
 package nova.wrapper.mc1710.backward.gui;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import net.minecraft.client.Minecraft;
@@ -10,8 +12,7 @@ import net.minecraft.world.World;
 import nova.core.entity.Entity;
 import nova.core.gui.Gui;
 import nova.core.gui.factory.GuiFactory;
-import nova.core.network.NetworkTarget.IllegalSideException;
-import nova.core.network.NetworkTarget.Side;
+import nova.core.util.exception.NovaException;
 import nova.core.util.transform.Vector3i;
 import nova.wrapper.mc1710.backward.entity.BWEntityPlayer;
 import nova.wrapper.mc1710.backward.gui.MCGui.MCContainer;
@@ -23,15 +24,21 @@ import cpw.mods.fml.common.network.IGuiHandler;
 public class MCGuiFactory extends GuiFactory {
 
 	private static Optional<Gui> guiToOpen = Optional.empty();
-	
+	private static List<Gui> idMappedGUIs = new ArrayList<>();
+
+	@Override
+	public void registerGui(Gui gui, String modID) {
+		super.registerGui(gui, modID);
+		idMappedGUIs.add(gui);
+	}
+
 	@Override
 	protected boolean bind(Gui gui, Entity entity, Vector3i pos) {
-		if (true)
-			throw new IllegalSideException(Side.SERVER);
 		BWEntityPlayer player = (BWEntityPlayer) entity;
 		guiToOpen = Optional.of(gui);
 		if (player.entity.worldObj.isRemote != gui.hasServerSide()) {
-			player.entity.openGui(NovaMinecraft.id, 0, player.entity.getEntityWorld(), pos.x, pos.y, pos.z);
+			int id = idMappedGUIs.contains(idMappedGUIs) ? idMappedGUIs.indexOf(idMappedGUIs) : -1;
+			player.entity.openGui(NovaMinecraft.id, id, player.entity.getEntityWorld(), pos.x, pos.y, pos.z);
 			return true;
 		}
 		return false;
@@ -64,7 +71,7 @@ public class MCGuiFactory extends GuiFactory {
 	public static class GuiHandler implements IGuiHandler {
 
 		@Override
-		public Object getServerGuiElement(int ID, EntityPlayer player, World world, int x, int y, int z) {	
+		public Object getServerGuiElement(int id, EntityPlayer player, World world, int x, int y, int z) {
 			if(guiToOpen.isPresent()) {
 				return ((MCGui) guiToOpen.get().getNative()).getContainer();
 			}
@@ -72,11 +79,16 @@ public class MCGuiFactory extends GuiFactory {
 		}
 
 		@Override
-		public Object getClientGuiElement(int ID, EntityPlayer player, World world, int x, int y, int z) {
-			if(guiToOpen.isPresent()) {
-				return ((MCGui) guiToOpen.get().getNative()).getGuiScreen();
+		public Object getClientGuiElement(int id, EntityPlayer player, World world, int x, int y, int z) {
+			try {
+				if (guiToOpen.isPresent()) {
+					return ((MCGui) guiToOpen.get().getNative()).getGuiScreen();
+				} else {
+					return ((MCGui) idMappedGUIs.get(id).getNative()).getGuiScreen();
+				}
+			} catch (Exception e) {
+				throw new NovaException("Couldn't get client side instance for the provided GUI of id " + id + " !");
 			}
-			return null;
 		}	
 	}
 }
