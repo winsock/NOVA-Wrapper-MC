@@ -50,27 +50,27 @@ public class MCNetworkManager extends NetworkManager {
 
 	@Override
 	public void sendPacket(PacketHandler sender, nova.core.network.Packet packet) {
+		PacketAbstract discriminator;
+
 		if (sender instanceof Block) {
 			Vector3i position = ((Block) sender).position();
-			PacketBlock discriminator = new PacketBlock(position.xi(), position.yi(), position.zi());
-			//Write packet ID
-			discriminator.data.writeInt(packet.getID());
-			discriminator.data.writeBytes(((MCPacket) packet).buf);
-			sendToAll(discriminator);
-			return;
-		}/* else if (sender instanceof Item) {
-			return;
-		}*/ else if (sender instanceof Entity) {
+			discriminator = new PacketBlock(position.xi(), position.yi(), position.zi());
+		} else if (sender instanceof Entity) {
 			Entity entity = (Entity) sender;
-			PacketEntity discriminator = new PacketEntity((FWEntity) entity.wrapper);
-			//Write packet ID
-			discriminator.data.writeInt(packet.getID());
-			discriminator.data.writeBytes(((MCPacket) packet).buf);
-			sendToAll(discriminator);
-			return;
-		}
+			discriminator = new PacketEntity((FWEntity) entity.wrapper);
 
-		throw new NovaException("Fail to send packet as the PacketHandler is of invalid type.");
+		} else {
+			throw new NovaException("Fail to send packet as the PacketHandler is of invalid type.");
+		}
+		//Write packet ID
+		discriminator.data.writeInt(packet.getID());
+		discriminator.data.writeBytes(((MCPacket) packet).buf);
+
+		if (isServer()) {
+			sendToAll(discriminator);
+		} else {
+			sendToServer(discriminator);
+		}
 	}
 
 	@Override
@@ -86,6 +86,7 @@ public class MCNetworkManager extends NetworkManager {
 		PacketBlock discriminator = new PacketBlock(position.xi(), position.yi(), position.zi());
 		MCPacket mcPacket = new MCPacket(discriminator.data);
 		mcPacket.setID(id);
+		discriminator.data.writeInt(id);
 		sender.write(mcPacket);
 		return discriminator;
 	}
