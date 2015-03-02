@@ -31,7 +31,7 @@ public class MCButton implements NativeButton, DrawableGuiComponent {
 			button = new MCGuiButton();
 		}
 
-		component.registerListener(this::onMousePressed, MouseEvent.class);
+		component.onGuiEvent(this::onMousePressed, MouseEvent.class);
 	}
 
 	@Override

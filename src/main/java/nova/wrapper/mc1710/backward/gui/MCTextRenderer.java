@@ -10,6 +10,7 @@ import nova.core.gui.render.FormattedText;
 import nova.core.gui.render.FormattedText.TextFormat;
 import nova.core.gui.render.TextRenderer;
 import nova.core.render.Color;
+import nova.core.util.math.MathUtil;
 import nova.core.util.transform.Vector2i;
 
 import org.lwjgl.opengl.GL11;
@@ -193,7 +194,11 @@ public class MCTextRenderer implements TextRenderer {
 
 	@Override
 	public Vector2i getBounds(String str) {
-		// TODO What about \n ?
-		return new Vector2i(fontrenderer.getStringWidth(str), fontrenderer.FONT_HEIGHT);
+		int height = 0, width = 0;
+		for (String line : str.split("%n|\n")) {
+			width = MathUtil.max(width, fontrenderer.getStringWidth(line));
+			height += fontrenderer.FONT_HEIGHT;
+		}
+		return new Vector2i(width, height);
 	}
 }
