@@ -7,6 +7,7 @@ import nova.core.gui.factory.GuiComponentFactory;
 import nova.core.gui.nativeimpl.NativeButton;
 import nova.core.gui.nativeimpl.NativeContainer;
 import nova.core.gui.nativeimpl.NativeGui;
+import nova.core.gui.nativeimpl.NativeGuiComponent;
 
 public class MCGuiComponentFactory extends GuiComponentFactory {
 
@@ -14,5 +15,6 @@ public class MCGuiComponentFactory extends GuiComponentFactory {
 		registerNativeComponent(NativeGui.class, (component) -> new MCGui((Gui) component));
 		registerNativeComponent(NativeContainer.class, (component) -> new MCGuiContainer((AbstractGuiContainer<?, ?>) component));
 		registerNativeComponent(NativeButton.class, (component) -> new MCButton((Button) component));
+		registerNativeComponent(NativeGuiComponent.class, (component) -> new MCGuiComponent(component));
 	}
 }

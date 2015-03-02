@@ -5,38 +5,15 @@ import java.util.List;
 
 import nova.core.gui.AbstractGuiContainer;
 import nova.core.gui.GuiComponent;
-import nova.core.gui.Outline;
 import nova.core.gui.nativeimpl.NativeContainer;
 import nova.core.gui.render.Graphics;
 
-public class MCGuiContainer implements NativeContainer, DrawableGuiComponent {
+public class MCGuiContainer extends MCGuiComponent implements NativeContainer {
 	
-	private AbstractGuiContainer<?, ?> component;
 	private List<GuiComponent<?, ?>> components = new ArrayList<>();
-	private Outline outline = Outline.empty;
 	
 	public MCGuiContainer(AbstractGuiContainer<?, ?> component) {
-		this.component = component;
-	}
-	
-	@Override
-	public GuiComponent<?, ?> getComponent() {
-		return component;
-	}
-
-	@Override
-	public Outline getOutline() {
-		return outline;
-	}
-
-	@Override
-	public void setOutline(Outline outline) {
-		this.outline = outline;
-	}
-
-	@Override
-	public void requestRender() {
-		
+		super(component);
 	}
 
 	@Override
@@ -52,9 +29,6 @@ public class MCGuiContainer implements NativeContainer, DrawableGuiComponent {
 	@Override
 	public void draw(int mouseX, int mouseY, float partial, Graphics graphics) {
 		components.forEach((component) -> ((DrawableGuiComponent)component.getNative()).draw(mouseX, mouseY, partial, graphics));
-		Outline outline = getOutline();
-		graphics.getCanvas().translate(outline.x1i(), outline.y1i());
-		getComponent().render(mouseX, mouseY, graphics);
-		graphics.getCanvas().translate(-outline.x1i(), -outline.y1i());
+		super.draw(mouseX, mouseY, partial, graphics);
 	}
 }

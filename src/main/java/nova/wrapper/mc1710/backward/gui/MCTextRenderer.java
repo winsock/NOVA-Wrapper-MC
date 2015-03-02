@@ -66,7 +66,7 @@ public class MCTextRenderer implements TextRenderer {
 		Matcher matcher = pattern.matcher(text);
 
 		boolean shadow = false;
-		Color color = Color.white;
+		Color color = Color.black;
 
 		int index = 0;
 		while (matcher.find()) {
@@ -165,14 +165,14 @@ public class MCTextRenderer implements TextRenderer {
 	@Override
 	public void drawString(int x, int y, String str) {
 		GL11.glTranslatef(0, 0, zIndex);
-		fontrenderer.drawString(str.replaceAll("\u00A7", ""), x, y, Color.white.argb());
+		fontrenderer.drawString(str.replaceAll("\u00A7", ""), x, y, Color.black.argb());
 		GL11.glTranslatef(0, 0, -zIndex);
 	}
 
 	@Override
 	public void drawString(int x, int y, String str, int width) {
 		GL11.glTranslatef(0, 0, zIndex);
-		fontrenderer.drawSplitString(str.replaceAll("\u00A7", "").replaceAll("%n", "\n"), x, y, width, Color.white.argb());
+		fontrenderer.drawSplitString(str.replaceAll("\u00A7", "").replaceAll("%n", "\n"), x, y, width, Color.black.argb());
 		GL11.glTranslatef(0, 0, -zIndex);
 	}
 

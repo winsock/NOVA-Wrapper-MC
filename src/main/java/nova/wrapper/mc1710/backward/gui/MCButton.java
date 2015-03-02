@@ -19,7 +19,7 @@ import cpw.mods.fml.relauncher.SideOnly;
 
 public class MCButton implements NativeButton, DrawableGuiComponent {
 
-	private Button component;
+	private final Button component;
 	
 	@SideOnly(Side.CLIENT)
 	private MCGuiButton button;

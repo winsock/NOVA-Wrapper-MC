@@ -16,6 +16,7 @@ import nova.core.gui.GuiEvent.MouseEvent.EnumMouseButton;
 import nova.core.gui.Outline;
 import nova.core.gui.nativeimpl.NativeGui;
 import nova.core.gui.render.Graphics;
+import nova.core.gui.render.TextMetrics;
 import nova.core.gui.render.TextRenderer;
 import nova.core.network.Packet;
 import nova.core.util.transform.Vector3i;
@@ -30,7 +31,8 @@ import cpw.mods.fml.relauncher.SideOnly;
 
 public class MCGui implements NativeGui, DrawableGuiComponent {
 
-	private Gui component;
+	private final Gui component;
+
 	private List<GuiComponent<?, ?>> components = new ArrayList<>();
 	private Outline outline = Outline.empty;
 	private Graphics graphics;
@@ -55,6 +57,11 @@ public class MCGui implements NativeGui, DrawableGuiComponent {
 
 	public MCContainer getContainer() {
 		return container;
+	}
+
+	@Override
+	public TextMetrics getTextMetrics() {
+		return textRenderer;
 	}
 
 	@Override
