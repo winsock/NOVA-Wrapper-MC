@@ -198,12 +198,6 @@ public class MCGui implements NativeGui, DrawableGuiComponent {
 				onResized(oldOutline);
 		}
 
-		@Override
-		public void onGuiClosed() {
-			super.onGuiClosed();
-			getGui().component.unbind();
-		}
-
 		public MCGui getGui() {
 			return MCGui.this;
 		}

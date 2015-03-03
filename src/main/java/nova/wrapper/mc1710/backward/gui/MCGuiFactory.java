@@ -6,6 +6,7 @@ import java.util.Optional;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.world.World;
@@ -47,7 +48,7 @@ public class MCGuiFactory extends GuiFactory {
 		gui.unbind();
 		FMLCommonHandler.instance().showGuiScreen(null);
 	}
-	
+
 	@Override
 	public Optional<Gui> getActiveGuiImpl() {
 		GuiScreen gui = Minecraft.getMinecraft().currentScreen;
@@ -70,8 +71,8 @@ public class MCGuiFactory extends GuiFactory {
 	public static class GuiHandler implements IGuiHandler {
 
 		@Override
-		public Object getServerGuiElement(int id, EntityPlayer player, World world, int x, int y, int z) {
-			if(guiToOpen.isPresent()) {
+		public Container getServerGuiElement(int id, EntityPlayer player, World world, int x, int y, int z) {
+			if (guiToOpen.isPresent()) {
 				Gui gui = guiToOpen.get();
 				guiToOpen = Optional.empty();
 				gui.bind(new BWEntityPlayer(player), new Vector3i(x, y, z));
@@ -81,23 +82,25 @@ public class MCGuiFactory extends GuiFactory {
 		}
 
 		@Override
-		public Object getClientGuiElement(int id, EntityPlayer player, World world, int x, int y, int z) {
-			try {
-				if (guiToOpen.isPresent()) {
-					Gui gui = guiToOpen.get();
-					gui.bind(new BWEntityPlayer(player), new Vector3i(x, y, z));
-					guiToOpen = Optional.empty();
-					MCGui nativeGui = (MCGui) gui.getNative();
-					nativeGui.newContainer();
-					return nativeGui.getGuiScreen();
-				} else {
-					MCGui nativeGui = (MCGui) idMappedGUIs.get(id).getNative();
-					nativeGui.newContainer();
-					return nativeGui.getGuiScreen();
-				}
-			} catch (Exception e) {
-				throw new NovaException("Couldn't get client side instance for the provided GUI of id " + id + " !");
+		public GuiContainer getClientGuiElement(int id, EntityPlayer player, World world, int x, int y, int z) {
+			Gui gui;
+			if (guiToOpen.isPresent()) {
+				// Check if the client side GUI instance was set with showGui on
+				// the client
+				gui = guiToOpen.get();
+				guiToOpen = Optional.empty();
+			} else {
+				// Try to get the client side GUI from the id mapping
+				gui = idMappedGUIs.get(id);
 			}
-		}	
+			if (gui == null)
+				throw new NovaException("Couldn't get client side instance for the provided GUI of id " + id + " !");
+
+			gui.bind(new BWEntityPlayer(player), new Vector3i(x, y, z));
+
+			MCGui nativeGui = (MCGui) gui.getNative();
+			nativeGui.newContainer();
+			return nativeGui.getGuiScreen();
+		}
 	}
 }

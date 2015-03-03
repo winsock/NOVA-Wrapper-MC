@@ -139,6 +139,6 @@ public class MCPacket implements Packet {
 	}
 
 	public void writeTo(ByteBuf other) {
-		buf.writeBytes(other);
+		other.writeBytes(buf);
 	}
 }

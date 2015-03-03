@@ -13,6 +13,10 @@ public class PacketGui extends PacketAbstract {
 
 	private MCPacket wrapped;
 
+	public PacketGui() {
+
+	}
+
 	public PacketGui(Packet wrapped) {
 		this.wrapped = (MCPacket) wrapped;
 	}
@@ -25,7 +29,7 @@ public class PacketGui extends PacketAbstract {
 	@Override
 	public void decodeInto(ChannelHandlerContext ctx, ByteBuf buffer) {
 		ByteBuf packetBuffer = Unpooled.buffer();
-		buffer.readBytes(packetBuffer);
+		packetBuffer.writeBytes(buffer);
 		wrapped = new MCPacket(packetBuffer);
 	}
 
