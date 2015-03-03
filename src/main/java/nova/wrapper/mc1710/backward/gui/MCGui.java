@@ -4,11 +4,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
-import nova.core.entity.Entity;
 import nova.core.game.Game;
 import nova.core.gui.Gui;
 import nova.core.gui.GuiComponent;
@@ -19,7 +18,6 @@ import nova.core.gui.render.Graphics;
 import nova.core.gui.render.TextMetrics;
 import nova.core.gui.render.TextRenderer;
 import nova.core.network.Packet;
-import nova.core.util.transform.Vector3i;
 import nova.wrapper.mc1710.network.discriminator.PacketGui;
 import nova.wrapper.mc1710.network.netty.MCNetworkManager;
 
@@ -55,19 +53,17 @@ public class MCGui implements NativeGui, DrawableGuiComponent {
 		return guiScreen;
 	}
 
-	public MCContainer getContainer() {
+	public MCContainer newContainer() {
+		container = new MCContainer();
+		if (FMLCommonHandler.instance().getSide().isClient()) {
+			guiScreen.inventorySlots = container;
+		}
 		return container;
 	}
 
 	@Override
 	public TextMetrics getTextMetrics() {
 		return textRenderer;
-	}
-
-	@Override
-	public void bind(Entity entity, Vector3i pos) {
-		// Create a new container instance because containers aren't state safe.
-		container = new MCContainer();
 	}
 
 	@Override
@@ -122,13 +118,23 @@ public class MCGui implements NativeGui, DrawableGuiComponent {
 		public MCGui getGui() {
 			return MCGui.this;
 		}
+
+		@Override
+		public void onContainerClosed(EntityPlayer player) {
+			super.onContainerClosed(player);
+			getGui().component.unbind();
+		}
 	}
 
 	@SideOnly(Side.CLIENT)
-	public class MCGuiScreen extends GuiScreen {
+	public class MCGuiScreen extends GuiContainer {
+
+		public MCGuiScreen() {
+			super(MCGui.this.container);
+		}
 
 		@Override
-		public void drawScreen(int mouseX, int mouseY, float partial) {
+		protected void drawGuiContainerBackgroundLayer(float partial, int mouseX, int mouseY) {
 			components.forEach((component) -> ((DrawableGuiComponent) component.getNative()).draw(mouseX, mouseY, partial, graphics));
 			Outline outline = getOutline();
 			graphics.getCanvas().translate(outline.x1i(), outline.y1i());
@@ -190,6 +196,12 @@ public class MCGui implements NativeGui, DrawableGuiComponent {
 
 			if (resized)
 				onResized(oldOutline);
+		}
+
+		@Override
+		public void onGuiClosed() {
+			super.onGuiClosed();
+			getGui().component.unbind();
 		}
 
 		public MCGui getGui() {

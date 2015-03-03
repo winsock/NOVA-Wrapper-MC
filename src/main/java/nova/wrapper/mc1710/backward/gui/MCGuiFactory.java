@@ -33,19 +33,18 @@ public class MCGuiFactory extends GuiFactory {
 	}
 
 	@Override
-	protected boolean bind(Gui gui, Entity entity, Vector3i pos) {
+	protected void showGui(Gui gui, Entity entity, Vector3i pos) {
 		BWEntityPlayer player = (BWEntityPlayer) entity;
+		int id = idMappedGUIs.indexOf(gui);
 		guiToOpen = Optional.of(gui);
 		if (player.entity.worldObj.isRemote != gui.hasServerSide()) {
-			int id = idMappedGUIs.contains(idMappedGUIs) ? idMappedGUIs.indexOf(idMappedGUIs) : -1;
 			player.entity.openGui(NovaMinecraft.id, id, player.entity.getEntityWorld(), pos.x, pos.y, pos.z);
-			return true;
 		}
-		return false;
 	}
 
 	@Override
-	protected void unbind(Gui gui) {
+	protected void closeGui(Gui gui) {
+		gui.unbind();
 		FMLCommonHandler.instance().showGuiScreen(null);
 	}
 	
@@ -73,7 +72,10 @@ public class MCGuiFactory extends GuiFactory {
 		@Override
 		public Object getServerGuiElement(int id, EntityPlayer player, World world, int x, int y, int z) {
 			if(guiToOpen.isPresent()) {
-				return ((MCGui) guiToOpen.get().getNative()).getContainer();
+				Gui gui = guiToOpen.get();
+				guiToOpen = Optional.empty();
+				gui.bind(new BWEntityPlayer(player), new Vector3i(x, y, z));
+				return ((MCGui) gui.getNative()).newContainer();
 			}
 			return null;
 		}
@@ -82,9 +84,16 @@ public class MCGuiFactory extends GuiFactory {
 		public Object getClientGuiElement(int id, EntityPlayer player, World world, int x, int y, int z) {
 			try {
 				if (guiToOpen.isPresent()) {
-					return ((MCGui) guiToOpen.get().getNative()).getGuiScreen();
+					Gui gui = guiToOpen.get();
+					gui.bind(new BWEntityPlayer(player), new Vector3i(x, y, z));
+					guiToOpen = Optional.empty();
+					MCGui nativeGui = (MCGui) gui.getNative();
+					nativeGui.newContainer();
+					return nativeGui.getGuiScreen();
 				} else {
-					return ((MCGui) idMappedGUIs.get(id).getNative()).getGuiScreen();
+					MCGui nativeGui = (MCGui) idMappedGUIs.get(id).getNative();
+					nativeGui.newContainer();
+					return nativeGui.getGuiScreen();
 				}
 			} catch (Exception e) {
 				throw new NovaException("Couldn't get client side instance for the provided GUI of id " + id + " !");
