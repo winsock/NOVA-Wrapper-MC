@@ -24,41 +24,43 @@ public class MCTextRenderer implements TextRenderer {
 
 	private static String unwrap(FormattedText text) {
 		TextFormat format = new TextFormat();
-		String formatted = "";
+		StringBuilder builder = new StringBuilder();
 		for (FormattedText sub : text) {
-			formatted += unwrap(sub, format);
+			unwrap(builder, sub, format);
 			format = sub.getFormat();
 		}
-		return formatted;
+		return builder.toString();
 	}
 
-	private static String unwrap(FormattedText text, TextFormat prev) {
-		String formatted = "";
+	private static void unwrap(StringBuilder builder, FormattedText text, TextFormat prev) {
 		TextFormat format = text.getFormat();
 
 		if (prev.shadow != format.shadow)
-			formatted += "\u00A7s";
+			builder.append("\u00A7s");
 		if (prev.color != format.color)
-			formatted += "\u00A7c" + format.color.argb() + "\u00A7";
+			builder.append("\u00A7c").append(format.color.argb()).append("\u00A7");
 
-		return formatted + addFormat(text.getText(), format);
+		addFormat(builder, text.getText(), format);
+	}
+
+	private static void addFormat(StringBuilder builder, String text, TextFormat format) {
+		if (format.bold)
+			builder.append("\u00A7l");
+		if (format.italic)
+			builder.append("\u00A7o");
+		if (format.strikethrough)
+			builder.append("\u00A7m");
+		if (format.underline)
+			builder.append("\u00A7n");
+
+		builder.append(text);
+		builder.append("\u00A7r");
 	}
 
 	private static String addFormat(String text, TextFormat format) {
-		String out = "";
-		if (format.bold)
-			out += "\u00A7l";
-		if (format.italic)
-			out += "\u00A7o";
-		if (format.strikethrough)
-			out += "\u00A7m";
-		if (format.underline)
-			out += "\u00A7n";
-
-		out += text;
-		out += "\u00A7r";
-
-		return out;
+		StringBuilder builder = new StringBuilder();
+		addFormat(builder, text, format);
+		return builder.toString();
 	}
 
 	private static List<Text> split(String text) {
