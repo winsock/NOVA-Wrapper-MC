@@ -16,12 +16,12 @@ import nova.core.gui.Outline;
 import nova.core.gui.nativeimpl.NativeGui;
 import nova.core.gui.render.Graphics;
 import nova.core.gui.render.TextMetrics;
-import nova.core.gui.render.TextRenderer;
 import nova.core.network.Packet;
 import nova.wrapper.mc1710.network.discriminator.PacketGui;
 import nova.wrapper.mc1710.network.netty.MCNetworkManager;
 
 import org.lwjgl.input.Keyboard;
+import org.lwjgl.opengl.GL11;
 
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.relauncher.Side;
@@ -34,8 +34,8 @@ public class MCGui implements NativeGui, DrawableGuiComponent {
 	private List<GuiComponent<?, ?>> components = new ArrayList<>();
 	private Outline outline = Outline.empty;
 	private Graphics graphics;
-	private TextRenderer textRenderer;
-	
+	private MCTextRenderer textRenderer;
+
 	@SideOnly(Side.CLIENT)
 	private MCGuiScreen guiScreen;
 	private MCContainer container;
@@ -70,7 +70,7 @@ public class MCGui implements NativeGui, DrawableGuiComponent {
 	public Gui getComponent() {
 		return component;
 	}
-	
+
 	@Override
 	public void addElement(GuiComponent<?, ?> component) {
 		components.add(component);
@@ -105,7 +105,11 @@ public class MCGui implements NativeGui, DrawableGuiComponent {
 
 	@Override
 	public void draw(int mouseX, int mouseY, float partial, Graphics graphics) {
-		guiScreen.drawScreen(mouseX, mouseY, partial);
+		components.forEach((component) -> ((DrawableGuiComponent) component.getNative()).draw(mouseX, mouseY, partial, graphics));
+		Outline outline = getOutline();
+		graphics.getCanvas().translate(outline.x1i(), outline.y1i());
+		getComponent().render(mouseX, mouseY, graphics);
+		graphics.getCanvas().translate(-outline.x1i(), -outline.y1i());
 	}
 
 	public class MCContainer extends Container {
@@ -135,11 +139,9 @@ public class MCGui implements NativeGui, DrawableGuiComponent {
 
 		@Override
 		protected void drawGuiContainerBackgroundLayer(float partial, int mouseX, int mouseY) {
-			components.forEach((component) -> ((DrawableGuiComponent) component.getNative()).draw(mouseX, mouseY, partial, graphics));
-			Outline outline = getOutline();
-			graphics.getCanvas().translate(outline.x1i(), outline.y1i());
-			getComponent().render(mouseX, mouseY, graphics);
-			graphics.getCanvas().translate(-outline.x1i(), -outline.y1i());
+			GL11.glPushMatrix();
+			MCGui.this.draw(mouseX, mouseY, partial, graphics);
+			GL11.glPopMatrix();
 		}
 
 		@Override
@@ -185,10 +187,12 @@ public class MCGui implements NativeGui, DrawableGuiComponent {
 		public void setWorldAndResolution(Minecraft mc, int width, int height) {
 			super.setWorldAndResolution(mc, width, height);
 
+			MCCanvas canvas = new MCCanvas(width, height, Tessellator.instance);
 			if (textRenderer == null)
-				textRenderer = new MCTextRenderer(fontRendererObj);
+				textRenderer = new MCTextRenderer(fontRendererObj, canvas);
 
-			graphics = new Graphics(new MCCanvas(width, height, Tessellator.instance), textRenderer);
+			textRenderer.setCanvas(canvas);
+			graphics = new Graphics(canvas, textRenderer);
 
 			boolean resized = width != outline.getWidth() || height != outline.getHeight();
 			Outline oldOutline = outline;

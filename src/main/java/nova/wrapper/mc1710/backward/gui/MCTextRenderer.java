@@ -18,9 +18,19 @@ import org.lwjgl.opengl.GL11;
 public class MCTextRenderer implements TextRenderer {
 
 	private final FontRenderer fontrenderer;
+	private MCCanvas canvas;
 	private int zIndex;
 
 	private static final Pattern pattern = Pattern.compile("(\u00A7s)|(\u00A7c([-+]?\\d+)\u00A7)");
+
+	public MCTextRenderer(FontRenderer fontrenderer, MCCanvas canvas) {
+		this.fontrenderer = fontrenderer;
+		this.canvas = canvas;
+	}
+
+	public void setCanvas(MCCanvas canvas) {
+		this.canvas = canvas;
+	}
 
 	private static String unwrap(FormattedText text) {
 		TextFormat format = new TextFormat();
@@ -113,12 +123,11 @@ public class MCTextRenderer implements TextRenderer {
 		}
 	}
 
-	public MCTextRenderer(FontRenderer fontrenderer) {
-		this.fontrenderer = fontrenderer;
-	}
-
 	@Override
 	public void drawString(int x, int y, FormattedText str) {
+		x += canvas.tx();
+		y += canvas.ty();
+
 		GL11.glTranslatef(0, 0, zIndex);
 		List<Text> text = split(unwrap(str));
 		int xOffset = 0;
@@ -131,6 +140,9 @@ public class MCTextRenderer implements TextRenderer {
 
 	@Override
 	public void drawString(int x, int y, FormattedText str, int width) {
+		x += canvas.tx();
+		y += canvas.ty();
+
 		GL11.glTranslatef(0, 0, zIndex);
 
 		int xOffset = 0;
@@ -160,12 +172,18 @@ public class MCTextRenderer implements TextRenderer {
 
 	@Override
 	public void drawCutString(int x, int y, FormattedText str, int width) {
+		x += canvas.tx();
+		y += canvas.ty();
+
 		// TODO implement
 		throw new UnsupportedOperationException();
 	}
 
 	@Override
 	public void drawString(int x, int y, String str) {
+		x += canvas.tx();
+		y += canvas.ty();
+
 		GL11.glTranslatef(0, 0, zIndex);
 		fontrenderer.drawString(str.replaceAll("\u00A7", ""), x, y, Color.black.argb());
 		GL11.glTranslatef(0, 0, -zIndex);
@@ -173,6 +191,9 @@ public class MCTextRenderer implements TextRenderer {
 
 	@Override
 	public void drawString(int x, int y, String str, int width) {
+		x += canvas.tx();
+		y += canvas.ty();
+
 		GL11.glTranslatef(0, 0, zIndex);
 		fontrenderer.drawSplitString(str.replaceAll("\u00A7", "").replaceAll("%n", "\n"), x, y, width, Color.black.argb());
 		GL11.glTranslatef(0, 0, -zIndex);
@@ -180,6 +201,9 @@ public class MCTextRenderer implements TextRenderer {
 
 	@Override
 	public void drawCutString(int x, int y, String str, int width) {
+		x += canvas.tx();
+		y += canvas.ty();
+
 		// TODO implement
 		throw new UnsupportedOperationException();
 	}

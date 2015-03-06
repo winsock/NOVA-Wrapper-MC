@@ -19,7 +19,6 @@ import nova.wrapper.mc1710.backward.entity.BWEntityPlayer;
 import nova.wrapper.mc1710.backward.gui.MCGui.MCContainer;
 import nova.wrapper.mc1710.backward.gui.MCGui.MCGuiScreen;
 import nova.wrapper.mc1710.launcher.NovaMinecraft;
-import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.network.IGuiHandler;
 
 public class MCGuiFactory extends GuiFactory {
@@ -45,8 +44,11 @@ public class MCGuiFactory extends GuiFactory {
 
 	@Override
 	protected void closeGui(Gui gui) {
-		gui.unbind();
-		FMLCommonHandler.instance().showGuiScreen(null);
+		if (gui.hasServerSide()) {
+			Minecraft.getMinecraft().thePlayer.closeScreen();
+		} else {
+			Minecraft.getMinecraft().thePlayer.closeScreenNoPacket();
+		}
 	}
 
 	@Override
