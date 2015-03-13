@@ -15,7 +15,7 @@ import nova.core.gui.GuiEvent.MouseEvent.EnumMouseButton;
 import nova.core.gui.Outline;
 import nova.core.gui.nativeimpl.NativeGui;
 import nova.core.gui.render.Graphics;
-import nova.core.gui.render.TextMetrics;
+import nova.core.gui.render.text.TextMetrics;
 import nova.core.network.Packet;
 import nova.wrapper.mc1710.network.discriminator.PacketGui;
 import nova.wrapper.mc1710.network.netty.MCNetworkManager;
@@ -139,9 +139,11 @@ public class MCGui implements NativeGui, DrawableGuiComponent {
 
 		@Override
 		protected void drawGuiContainerBackgroundLayer(float partial, int mouseX, int mouseY) {
+			GL11.glDisable(GL11.GL_CULL_FACE);
 			GL11.glPushMatrix();
 			MCGui.this.draw(mouseX, mouseY, partial, graphics);
 			GL11.glPopMatrix();
+			GL11.glEnable(GL11.GL_CULL_FACE);
 		}
 
 		@Override

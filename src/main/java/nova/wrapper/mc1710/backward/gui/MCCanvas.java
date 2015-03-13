@@ -42,7 +42,6 @@ public class MCCanvas extends Canvas {
 	public void startDrawing(boolean textured) {
 		if (!textured)
 			GL11.glDisable(GL11.GL_TEXTURE_2D);
-		GL11.glDisable(GL11.GL_CULL_FACE);
 		GL11.glColor4f(state.color.redf(), state.color.greenf(), state.color.bluef(), state.color.alphaf());
 		tessellator.startDrawing(GL11.GL_POLYGON);
 	}
@@ -61,7 +60,6 @@ public class MCCanvas extends Canvas {
 	public void draw() {
 		tessellator.draw();
 		GL11.glEnable(GL11.GL_TEXTURE_2D);
-		GL11.glEnable(GL11.GL_CULL_FACE);
 	}
 
 	@Override
