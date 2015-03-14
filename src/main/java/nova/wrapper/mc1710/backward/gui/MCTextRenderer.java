@@ -39,7 +39,7 @@ public class MCTextRenderer implements TextRenderer {
 
 	private Paragraph<Word> unwrapByWord(FormattedText text, int width) {
 
-		Paragraph<Word> unwrapped = new Paragraph<>(true);
+		Paragraph<Word> unwrapped = new Paragraph<>(width);
 		List<FormattedText> list = Lists.newArrayList(text);
 		Line<Word> currentLine = new Line<>();
 		unwrapped.lines.add(currentLine);
@@ -111,7 +111,7 @@ public class MCTextRenderer implements TextRenderer {
 	}
 
 	private Paragraph<Text> unwrapByFormat(FormattedText text) {
-		Paragraph<Text> unwrapped = new Paragraph<>(false);
+		Paragraph<Text> unwrapped = new Paragraph<>();
 		Line<Text> currentLine = new Line<>();
 		unwrapped.lines.add(currentLine);
 
@@ -224,9 +224,15 @@ public class MCTextRenderer implements TextRenderer {
 		private List<Line<T>> lines = new ArrayList<>();
 		private Vector2d dimension;
 		private boolean wordWrapped;
+		private int width;
 
-		private Paragraph(boolean wordWrapped) {
-			this.wordWrapped = wordWrapped;
+		private Paragraph() {
+			wordWrapped = false;
+		}
+
+		private Paragraph(int widht) {
+			wordWrapped = true;
+			width = widht;
 		}
 
 		@Override
@@ -266,15 +272,18 @@ public class MCTextRenderer implements TextRenderer {
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	private <T extends RenderedText> Paragraph<T> getCached(FormattedText str, boolean wordWrapped, int width) {
 		Paragraph<T> text;
 		Optional<RenderedText> cached = str.getCached();
-		if (cached.isPresent() && !((Paragraph<?>) cached.get()).wordWrapped) {
+		if (cached.isPresent()) {
 			text = (Paragraph<T>) cached.get();
-		} else {
-			text = (Paragraph<T>) (wordWrapped ? unwrapByWord(str, width) : unwrapByFormat(str));
-			str.setCached(text);
+			if (wordWrapped == text.wordWrapped && (!wordWrapped || text.width == width))
+				return text;
 		}
+
+		text = (Paragraph<T>) (wordWrapped ? unwrapByWord(str, width) : unwrapByFormat(str));
+		str.setCached(text);
 		return text;
 	}
 
