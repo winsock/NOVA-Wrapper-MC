@@ -1,9 +1,17 @@
 package nova.wrapper.mc1710.backward.gui;
 
+import nova.core.gui.nativeimpl.NativeGuiComponent;
 import nova.core.gui.render.Graphics;
 
-public interface DrawableGuiComponent {
-	
+public interface DrawableGuiComponent extends NativeGuiComponent {
+
 	public void draw(int mouseX, int mouseY, float partial, Graphics graphics);
-	
+
+	public default MCCanvas getCanvas() {
+		return getGui().getCanvas();
+	}
+
+	public default MCGui getGui() {
+		return (MCGui) getComponent().getParentGui().get().getNative();
+	}
 }

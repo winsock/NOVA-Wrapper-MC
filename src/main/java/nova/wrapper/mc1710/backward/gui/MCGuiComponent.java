@@ -37,9 +37,6 @@ public class MCGuiComponent implements NativeGuiComponent, DrawableGuiComponent 
 
 	@Override
 	public void draw(int mouseX, int mouseY, float partial, Graphics graphics) {
-		Outline outline = getOutline();
-		graphics.getCanvas().translate(outline.x1i(), outline.y1i());
 		getComponent().render(mouseX, mouseY, graphics);
-		graphics.getCanvas().translate(-outline.x1i(), -outline.y1i());
 	}
 }

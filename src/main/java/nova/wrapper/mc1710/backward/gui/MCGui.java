@@ -1,8 +1,5 @@
 package nova.wrapper.mc1710.backward.gui;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.renderer.Tessellator;
@@ -27,11 +24,10 @@ import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
-public class MCGui implements NativeGui, DrawableGuiComponent {
+public class MCGui extends MCGuiContainer implements NativeGui, DrawableGuiComponent {
 
 	private final Gui component;
 
-	private List<GuiComponent<?, ?>> components = new ArrayList<>();
 	private Outline outline = Outline.empty;
 	private Graphics graphics;
 	private MCTextRenderer textRenderer;
@@ -41,6 +37,7 @@ public class MCGui implements NativeGui, DrawableGuiComponent {
 	private MCContainer container;
 
 	public MCGui(Gui component) {
+		super(component);
 		this.component = component;
 
 		if (FMLCommonHandler.instance().getSide().isClient()) {
@@ -61,6 +58,10 @@ public class MCGui implements NativeGui, DrawableGuiComponent {
 		return container;
 	}
 
+	public MCCanvas getCanvas() {
+		return (MCCanvas) graphics.getCanvas();
+	}
+
 	@Override
 	public TextMetrics getTextMetrics() {
 		return textRenderer;
@@ -69,16 +70,6 @@ public class MCGui implements NativeGui, DrawableGuiComponent {
 	@Override
 	public Gui getComponent() {
 		return component;
-	}
-
-	@Override
-	public void addElement(GuiComponent<?, ?> component) {
-		components.add(component);
-	}
-
-	@Override
-	public void removeElement(GuiComponent<?, ?> component) {
-		components.remove(component);
 	}
 
 	@Override
@@ -105,7 +96,14 @@ public class MCGui implements NativeGui, DrawableGuiComponent {
 
 	@Override
 	public void draw(int mouseX, int mouseY, float partial, Graphics graphics) {
-		components.forEach((component) -> ((DrawableGuiComponent) component.getNative()).draw(mouseX, mouseY, partial, graphics));
+
+		for (GuiComponent<?, ?> component : components) {
+			Outline outline = component.getOutline();
+			graphics.getCanvas().translate(outline.x1i(), outline.y1i());
+			((DrawableGuiComponent) component.getNative()).draw(mouseX, mouseY, partial, graphics);
+			graphics.getCanvas().translate(-outline.x1i(), -outline.y1i());
+		}
+
 		Outline outline = getOutline();
 		graphics.getCanvas().translate(outline.x1i(), outline.y1i());
 		getComponent().render(mouseX, mouseY, graphics);

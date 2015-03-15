@@ -1,20 +1,11 @@
 package nova.wrapper.mc1710.launcher;
 
-import cpw.mods.fml.common.FMLCommonHandler;
-import cpw.mods.fml.common.Mod;
-import cpw.mods.fml.common.SidedProxy;
-import cpw.mods.fml.common.event.FMLInitializationEvent;
-import cpw.mods.fml.common.event.FMLPostInitializationEvent;
-import cpw.mods.fml.common.event.FMLPreInitializationEvent;
-import cpw.mods.fml.common.event.FMLServerStartingEvent;
-import cpw.mods.fml.common.event.FMLServerStoppingEvent;
-import cpw.mods.fml.common.network.NetworkRegistry;
-import cpw.mods.fml.relauncher.FMLInjectionData;
+import java.io.File;
+import java.util.Set;
+
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Configuration;
 import nova.bootstrap.DependencyInjectionEntryPoint;
-import nova.core.deps.DepDownloader;
-import nova.core.deps.MavenDependency;
 import nova.core.event.EventManager;
 import nova.core.game.Game;
 import nova.internal.NovaLauncher;
@@ -31,9 +22,15 @@ import nova.wrapper.mc1710.item.ItemWrapperRegistry;
 import nova.wrapper.mc1710.item.OreDictionaryIntegration;
 import nova.wrapper.mc1710.manager.config.ConfigManager;
 import nova.wrapper.mc1710.recipes.MinecraftRecipeRegistry;
-
-import java.io.File;
-import java.util.Set;
+import cpw.mods.fml.common.FMLCommonHandler;
+import cpw.mods.fml.common.Mod;
+import cpw.mods.fml.common.SidedProxy;
+import cpw.mods.fml.common.event.FMLInitializationEvent;
+import cpw.mods.fml.common.event.FMLPostInitializationEvent;
+import cpw.mods.fml.common.event.FMLPreInitializationEvent;
+import cpw.mods.fml.common.event.FMLServerStartingEvent;
+import cpw.mods.fml.common.event.FMLServerStoppingEvent;
+import cpw.mods.fml.common.network.NetworkRegistry;
 
 /**
  * The main Nova Minecraft Wrapper loader, using Minecraft Forge.
@@ -47,7 +44,6 @@ public class NovaMinecraft {
 	public static final String name = "NOVA";
 
 	@SidedProxy(clientSide = "nova.wrapper.mc1710.launcher.ClientProxy", serverSide = "nova.wrapper.mc1710.launcher.CommonProxy")
-
 	public static CommonProxy proxy;
 	@Mod.Instance(id)
 	public static NovaMinecraft instance;
@@ -82,15 +78,15 @@ public class NovaMinecraft {
 		OreDictionaryIntegration.instance.registerOreDictionary();
 		MinecraftRecipeRegistry.instance.registerRecipes();
 
-		for (MavenDependency[] dependencies : launcher.getNeededDeps().values()) {
+		/*for (MavenDependency[] dependencies : launcher.getNeededDeps().values()) {
 			for (MavenDependency dep : dependencies) {
 				DepDownloader.downloadDepdency(dep.getDownloadURL(), FMLInjectionData.data()[6] + "/mods/" + dep.getDownloadURL().getFile().substring(dep.getDownloadURL().getFile().lastIndexOf("/")));
 			}
-		}
+		}*/
 
 		launcher.preInit();
 
-		//Initiate config system
+		// Initiate config system
 		launcher.getLoadedModMap().forEach((mod, loader) -> {
 			Configuration config = new Configuration(new File(evt.getModConfigurationDirectory(), mod.name()));
 			ConfigManager.instance.sync(config, loader.getClass().getPackage().getName());

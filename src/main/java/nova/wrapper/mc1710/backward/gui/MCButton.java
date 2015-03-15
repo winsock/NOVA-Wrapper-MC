@@ -12,6 +12,9 @@ import nova.core.gui.components.Button;
 import nova.core.gui.nativeimpl.NativeButton;
 import nova.core.gui.render.Graphics;
 import nova.core.util.transform.Vector2i;
+
+import org.lwjgl.opengl.GL11;
+
 import cpw.mods.fml.client.config.GuiButtonExt;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.relauncher.Side;
@@ -20,7 +23,8 @@ import cpw.mods.fml.relauncher.SideOnly;
 public class MCButton implements NativeButton, DrawableGuiComponent {
 
 	private final Button component;
-	
+	private Outline outline = Outline.empty;
+
 	@SideOnly(Side.CLIENT)
 	private MCGuiButton button;
 
@@ -41,27 +45,26 @@ public class MCButton implements NativeButton, DrawableGuiComponent {
 
 	@Override
 	public Outline getOutline() {
-		return new Outline(button.xPosition, button.yPosition, button.width, button.height);
+		return outline;
 	}
 
 	@Override
 	public void setOutline(Outline outline) {
-		button.xPosition = outline.x1i();
-		button.yPosition = outline.y1i();
 		button.width = outline.getWidth();
 		button.height = outline.getHeight();
+		this.outline = outline;
 	}
 
 	@Override
 	public void requestRender() {
-		
+
 	}
 
 	@Override
 	public String getText() {
 		return button.displayString;
 	}
-	
+
 	@Override
 	public Optional<Vector2i> getMinimumSize() {
 		FontRenderer fontRenderer = Minecraft.getMinecraft().fontRenderer;
@@ -80,7 +83,7 @@ public class MCButton implements NativeButton, DrawableGuiComponent {
 		// TODO
 		return false;
 	}
-	
+
 	@Override
 	public void setPressed(boolean isPressed) {
 		// TODO
@@ -88,11 +91,9 @@ public class MCButton implements NativeButton, DrawableGuiComponent {
 
 	@Override
 	public void draw(int mouseX, int mouseY, float partial, Graphics graphics) {
-		button.drawButton(Minecraft.getMinecraft(), mouseX, mouseY);
 		Outline outline = getOutline();
-		graphics.getCanvas().translate(outline.x1i(), outline.y1i());
+		button.drawButton(Minecraft.getMinecraft(), mouseX, mouseY);
 		getComponent().render(mouseX, mouseY, graphics);
-		graphics.getCanvas().translate(-outline.x1i(), -outline.y1i());
 	}
 
 	public void onMousePressed(MouseEvent event) {
@@ -110,6 +111,14 @@ public class MCButton implements NativeButton, DrawableGuiComponent {
 
 		public MCGuiButton() {
 			super(0, 0, 0, "");
+		}
+
+		@Override
+		public void drawButton(Minecraft mc, int mouseX, int mouseY) {
+			MCCanvas canvas = getCanvas();
+			GL11.glTranslated(canvas.tx(), canvas.ty(), canvas.getZIndex());
+			super.drawButton(mc, mouseX, mouseY);
+			GL11.glTranslated(-canvas.tx(), -canvas.ty(), -canvas.getZIndex());
 		}
 	}
 }
