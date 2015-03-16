@@ -55,9 +55,13 @@ public class MCGui extends MCGuiContainer implements NativeGui, DrawableGuiCompo
 		if (FMLCommonHandler.instance().getSide().isClient()) {
 			guiScreen.inventorySlots = container;
 		}
+		for (GuiComponent<?, ?> component : components) {
+			((DrawableGuiComponent) component.getNative()).onAddedToContainer(container);
+		}
 		return container;
 	}
 
+	@Override
 	public MCCanvas getCanvas() {
 		return (MCCanvas) graphics.getCanvas();
 	}
@@ -128,11 +132,29 @@ public class MCGui extends MCGuiContainer implements NativeGui, DrawableGuiCompo
 		}
 	}
 
+	private static final Container fakeContainer = new Container() {
+		@Override
+		public boolean canInteractWith(EntityPlayer player) {
+			return false;
+		}
+	};
+
 	@SideOnly(Side.CLIENT)
 	public class MCGuiScreen extends GuiContainer {
 
 		public MCGuiScreen() {
 			super(MCGui.this.container);
+		}
+
+		@Override
+		public void drawScreen(int mouseX, int mouseY, float partial) {
+			Container container = inventorySlots;
+			// Replace container instance with fake container in order to stop
+			// slot rendering
+			inventorySlots = fakeContainer;
+			super.drawScreen(mouseX, mouseY, partial);
+			// Back to where it belongs
+			inventorySlots = container;
 		}
 
 		@Override

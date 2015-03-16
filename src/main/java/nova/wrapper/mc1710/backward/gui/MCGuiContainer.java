@@ -9,7 +9,7 @@ import nova.core.gui.Outline;
 import nova.core.gui.nativeimpl.NativeContainer;
 import nova.core.gui.render.Graphics;
 
-public class MCGuiContainer extends MCGuiComponent implements NativeContainer {
+public class MCGuiContainer extends MCGuiComponent<AbstractGuiContainer<?, ?>> implements NativeContainer {
 
 	protected List<GuiComponent<?, ?>> components = new ArrayList<>();
 

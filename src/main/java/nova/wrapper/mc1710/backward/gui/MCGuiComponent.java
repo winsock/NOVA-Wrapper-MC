@@ -6,17 +6,17 @@ import nova.core.gui.nativeimpl.NativeGuiComponent;
 import nova.core.gui.render.Graphics;
 
 // TODO Keyboard and mouse interaction
-public class MCGuiComponent implements NativeGuiComponent, DrawableGuiComponent {
+public class MCGuiComponent<T extends GuiComponent<?, ?>> implements NativeGuiComponent, DrawableGuiComponent {
 
-	private final GuiComponent<?, ?> component;
-	private Outline outline = Outline.empty;
+	protected final T component;
+	protected Outline outline = Outline.empty;
 
-	public MCGuiComponent(GuiComponent<?, ?> component) {
+	public MCGuiComponent(T component) {
 		this.component = component;
 	}
 
 	@Override
-	public GuiComponent<?, ?> getComponent() {
+	public T getComponent() {
 		return component;
 	}
 

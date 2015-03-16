@@ -6,6 +6,8 @@ import java.util.Set;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Configuration;
 import nova.bootstrap.DependencyInjectionEntryPoint;
+import nova.core.deps.DepDownloader;
+import nova.core.deps.MavenDependency;
 import nova.core.event.EventManager;
 import nova.core.game.Game;
 import nova.internal.NovaLauncher;
@@ -31,6 +33,7 @@ import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.event.FMLServerStartingEvent;
 import cpw.mods.fml.common.event.FMLServerStoppingEvent;
 import cpw.mods.fml.common.network.NetworkRegistry;
+import cpw.mods.fml.relauncher.FMLInjectionData;
 
 /**
  * The main Nova Minecraft Wrapper loader, using Minecraft Forge.
@@ -78,11 +81,15 @@ public class NovaMinecraft {
 		OreDictionaryIntegration.instance.registerOreDictionary();
 		MinecraftRecipeRegistry.instance.registerRecipes();
 
-		/*for (MavenDependency[] dependencies : launcher.getNeededDeps().values()) {
-			for (MavenDependency dep : dependencies) {
-				DepDownloader.downloadDepdency(dep.getDownloadURL(), FMLInjectionData.data()[6] + "/mods/" + dep.getDownloadURL().getFile().substring(dep.getDownloadURL().getFile().lastIndexOf("/")));
+		try {
+			for (MavenDependency[] dependencies : launcher.getNeededDeps().values()) {
+				for (MavenDependency dep : dependencies) {
+					DepDownloader.downloadDepdency(dep.getDownloadURL(), FMLInjectionData.data()[6] + "/mods/" + dep.getDownloadURL().getFile().substring(dep.getDownloadURL().getFile().lastIndexOf("/")));
+				}
 			}
-		}*/
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 
 		launcher.preInit();
 

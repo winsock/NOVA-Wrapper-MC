@@ -1,13 +1,13 @@
 package nova.wrapper.mc1710.backward.inventory;
 
+import java.util.Optional;
+
 import net.minecraft.inventory.IInventory;
 import nova.core.inventory.Inventory;
 import nova.core.item.Item;
 
-import java.util.Optional;
-
 public class BWInventory implements Inventory {
-	private final IInventory mcInventory;
+	public final IInventory mcInventory;
 
 	public BWInventory(IInventory mcInventory) {
 		this.mcInventory = mcInventory;
