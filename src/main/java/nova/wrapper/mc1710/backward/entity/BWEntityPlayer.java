@@ -1,25 +1,30 @@
 package nova.wrapper.mc1710.backward.entity;
 
 import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.inventory.IInventory;
 import net.minecraft.util.DamageSource;
 import nova.core.entity.Entity;
 import nova.core.entity.components.Damageable;
 import nova.core.player.InventoryPlayer;
 import nova.core.player.Player;
 import nova.core.util.transform.Vector3d;
+import nova.wrapper.mc1710.backward.inventory.BWInventory;
 
 /**
  * A Nova to Minecraft entity wrapper
+ * 
  * @author Calclavia
  */
 public class BWEntityPlayer extends BWEntity implements Player, Damageable {
 
-	public net.minecraft.entity.player.EntityPlayer entity;
+	public final net.minecraft.entity.player.EntityPlayer entity;
+	public final BWInventoryPlayer inventory;
 
 	public BWEntityPlayer(net.minecraft.entity.player.EntityPlayer entity) {
-		//TODO: Should this be entity ID?
+		// TODO: Should this be entity ID?
 		super(entity);
 		this.entity = entity;
+		this.inventory = new BWInventoryPlayer(entity.inventory);
 	}
 
 	@Override
@@ -34,8 +39,7 @@ public class BWEntityPlayer extends BWEntity implements Player, Damageable {
 
 	@Override
 	public InventoryPlayer getInventory() {
-		// TODO
-		return null;
+		return inventory;
 	}
 
 	@Override
@@ -61,6 +65,18 @@ public class BWEntityPlayer extends BWEntity implements Player, Damageable {
 			entity.attackEntityFrom(DamageSource.generic, (float) amount);
 		}
 
-		//TODO: Apply other damage source wrappers?
+		// TODO: Apply other damage source wrappers?
+	}
+
+	public class BWInventoryPlayer extends BWInventory implements InventoryPlayer {
+
+		public BWInventoryPlayer(IInventory inventory) {
+			super(inventory);
+		}
+
+		@Override
+		public int getHeldSlot() {
+			return entity.inventory.currentItem;
+		}
 	}
 }
