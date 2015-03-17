@@ -14,6 +14,7 @@ import nova.core.gui.nativeimpl.NativeGui;
 import nova.core.gui.render.Graphics;
 import nova.core.gui.render.text.TextMetrics;
 import nova.core.network.Packet;
+import nova.wrapper.mc1710.backward.gui.text.MCTextRenderer;
 import nova.wrapper.mc1710.network.discriminator.PacketGui;
 import nova.wrapper.mc1710.network.netty.MCNetworkManager;
 
