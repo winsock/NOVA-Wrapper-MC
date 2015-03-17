@@ -32,7 +32,7 @@ class SimpleParagraph extends AbstractParagraph<Text> implements RenderedText {
 					converted = new Text(split[i], nextFormat, fontRenderer);
 					currentLine.append(converted);
 				} else {
-					converted.append(sub.getText(), nextFormat);
+					converted.append(sub.getText(), nextFormat, fontRenderer);
 				}
 			}
 			format = nextFormat;

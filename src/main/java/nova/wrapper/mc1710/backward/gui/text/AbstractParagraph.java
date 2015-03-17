@@ -9,8 +9,8 @@ import nova.core.util.transform.Vector2d;
 
 abstract class AbstractParagraph<T extends IText> implements IText, RenderedText {
 
-	protected static Pattern wordSOL = Pattern.compile("^(?<! )[^ \n]+");
-	protected static Pattern wordPattern = Pattern.compile("(%n|\n)|([^ ]+[ \n%n])| +|(.+)");
+	protected static Pattern wordSOL = Pattern.compile("^\\b[^\\s\n]+");
+	protected static Pattern wordPattern = Pattern.compile("(%n|\n)|([^\\s]+(\\s|\n|%n))| +|(.+)");
 
 	protected List<Line<T>> lines = new ArrayList<>();
 	protected Vector2d dimensions;

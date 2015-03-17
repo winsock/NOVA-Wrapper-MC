@@ -41,7 +41,7 @@ class Paragraph extends AbstractParagraph<Word> implements RenderedText {
 					String string2 = matcher.group(2);
 					if (string2 == null) {
 						flag = true;
-						string2 = matcher.group(3);
+						string2 = matcher.group(4);
 						if (string2 == null)
 							continue;
 					}
@@ -66,12 +66,11 @@ class Paragraph extends AbstractParagraph<Word> implements RenderedText {
 								if (matcher2.find()) {
 									word.append(new Text(matcher2.group(), next.getFormat(), fontRenderer));
 									list.set(j, new FormattedText(string3.substring(matcher2.end(), string3.length()), next.getFormat()));
-								} else {
-									break;
 								}
+								break;
 							}
 						}
-						word.text.get(word.text.size() - 1).text += " ";
+						word.text.get(word.text.size() - 1).append(" ", format, fontRenderer);
 					}
 
 					double wordWidth = word.getDimensions().x;

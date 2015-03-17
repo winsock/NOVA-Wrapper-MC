@@ -15,17 +15,19 @@ interface IText {
 
 		String text;
 		final TextFormat format;
-		final Vector2d dimensions;
+		Vector2d dimensions;
 
 		Text(String text, TextFormat format, FontRenderer fontrenderer) {
 			this.text = addFormat(text, format);
 			this.format = format;
 			float scale = format.size / (float) fontrenderer.FONT_HEIGHT;
-			this.dimensions = new Vector2d(fontrenderer.getStringWidth(text) * scale, fontrenderer.FONT_HEIGHT * scale);
+			this.dimensions = new Vector2d(fontrenderer.getStringWidth(this.text) * scale, fontrenderer.FONT_HEIGHT * scale);
 		}
 
-		Text append(String text, TextFormat format) {
+		Text append(String text, TextFormat format, FontRenderer fontrenderer) {
 			this.text += addFormat(text, format);
+			float scale = format.size / (float) fontrenderer.FONT_HEIGHT;
+			this.dimensions = new Vector2d(fontrenderer.getStringWidth(this.text) * scale, fontrenderer.FONT_HEIGHT * scale);
 			return this;
 		}
 
