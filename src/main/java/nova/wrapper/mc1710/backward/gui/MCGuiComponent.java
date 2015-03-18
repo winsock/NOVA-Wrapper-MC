@@ -37,6 +37,6 @@ public class MCGuiComponent<T extends GuiComponent<?, ?>> implements NativeGuiCo
 
 	@Override
 	public void draw(int mouseX, int mouseY, float partial, Graphics graphics) {
-		getComponent().render(mouseX, mouseY, graphics);
+		getComponent().getNative().render(mouseX, mouseY, graphics);
 	}
 }

@@ -1,5 +1,7 @@
 package nova.wrapper.mc1710.backward.gui;
 
+import java.util.Optional;
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.renderer.Tessellator;
@@ -11,9 +13,11 @@ import nova.core.gui.GuiComponent;
 import nova.core.gui.GuiEvent.MouseEvent.EnumMouseButton;
 import nova.core.gui.Outline;
 import nova.core.gui.nativeimpl.NativeGui;
+import nova.core.gui.render.Canvas;
 import nova.core.gui.render.Graphics;
 import nova.core.gui.render.text.TextMetrics;
 import nova.core.network.Packet;
+import nova.core.util.transform.Vector2i;
 import nova.wrapper.mc1710.backward.gui.text.MCTextRenderer;
 import nova.wrapper.mc1710.network.discriminator.PacketGui;
 import nova.wrapper.mc1710.network.netty.MCNetworkManager;
@@ -25,6 +29,11 @@ import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
+/**
+ * Minecraft implementation of the NOVA GUI System
+ * 
+ * @author Vic Nightfall
+ */
 public class MCGui extends MCGuiContainer implements NativeGui, DrawableGuiComponent {
 
 	private final Gui component;
@@ -102,17 +111,30 @@ public class MCGui extends MCGuiContainer implements NativeGui, DrawableGuiCompo
 	@Override
 	public void draw(int mouseX, int mouseY, float partial, Graphics graphics) {
 
-		for (GuiComponent<?, ?> component : components) {
-			Outline outline = component.getOutline();
-			graphics.getCanvas().translate(outline.x1i(), outline.y1i());
-			((DrawableGuiComponent) component.getNative()).draw(mouseX, mouseY, partial, graphics);
-			graphics.getCanvas().translate(-outline.x1i(), -outline.y1i());
+		Canvas canvas = graphics.getCanvas();
+
+		Optional<Vector2i> preferredSize = getComponent().getPreferredSize();
+		if (preferredSize.isPresent()) {
+			// We have a preferred size so we can center the GUI and draw our
+			// fancy gray background.
+
+			Vector2i size = preferredSize.get();
+			int xOffset = getGuiScreen().width / 2 - size.xi() / 2;
+			int yOffset = getGuiScreen().height / 2 - size.yi() / 2;
+			GuiUtils.drawGUIWindow(xOffset - 4, yOffset - 4, size.xi() + 8, size.yi() + 8);
+
+			Vector2i oldSize = getOutline().getDimension();
+			setOutline(getOutline().setPosition(new Vector2i(xOffset, yOffset)).setDimension(size));
+
+			if (!oldSize.equals(size)) {
+				getComponent().revalidate();
+			}
 		}
 
-		Outline outline = getOutline();
-		graphics.getCanvas().translate(outline.x1i(), outline.y1i());
-		getComponent().render(mouseX, mouseY, graphics);
-		graphics.getCanvas().translate(-outline.x1i(), -outline.y1i());
+		Outline guiOutline = getOutline();
+		canvas.translate(guiOutline.x1i(), guiOutline.y1i());
+		super.draw(mouseX - guiOutline.x1i(), mouseY - guiOutline.y1i(), partial, graphics);
+		canvas.translate(-guiOutline.x1i(), -guiOutline.y1i());
 	}
 
 	public class MCContainer extends Container {
@@ -169,12 +191,12 @@ public class MCGui extends MCGuiContainer implements NativeGui, DrawableGuiCompo
 
 		@Override
 		protected void mouseClicked(int mouseX, int mouseY, int button) {
-			onMousePressed(mouseX, mouseY, getMouseButton(button), true);
+			onMousePressed(mouseX - getOutline().x1i(), mouseY - getOutline().y1i(), getMouseButton(button), true);
 		}
 
 		@Override
 		protected void mouseMovedOrUp(int mouseX, int mouseY, int button) {
-			onMousePressed(mouseX, mouseY, getMouseButton(button), false);
+			onMousePressed(mouseX - getOutline().x1i(), mouseY - getOutline().y1i(), getMouseButton(button), false);
 		}
 
 		private EnumMouseButton getMouseButton(int button) {

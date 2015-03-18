@@ -52,9 +52,6 @@ public class MCTextRenderer implements TextRenderer {
 
 	@Override
 	public void drawString(int x, int y, String str) {
-		x += canvas.tx();
-		y += canvas.ty();
-
 		GL11.glTranslatef(0, 0, zIndex);
 		fontrenderer.drawString(str.replaceAll("\u00A7", ""), x, y, Color.black.argb());
 		GL11.glTranslatef(0, 0, -zIndex);
@@ -62,9 +59,6 @@ public class MCTextRenderer implements TextRenderer {
 
 	@Override
 	public void drawString(int x, int y, String str, int width) {
-		x += canvas.tx();
-		y += canvas.ty();
-
 		GL11.glTranslatef(0, 0, zIndex);
 		fontrenderer.drawSplitString(str.replaceAll("\u00A7", "").replaceAll("%n", "\n"), x, y, width, Color.black.argb());
 		GL11.glTranslatef(0, 0, -zIndex);
@@ -72,9 +66,6 @@ public class MCTextRenderer implements TextRenderer {
 
 	@Override
 	public void drawCutString(int x, int y, String str, int width) {
-		x += canvas.tx();
-		y += canvas.ty();
-
 		// TODO implement
 		throw new UnsupportedOperationException();
 	}

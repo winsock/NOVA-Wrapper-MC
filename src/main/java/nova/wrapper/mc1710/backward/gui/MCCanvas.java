@@ -19,23 +19,9 @@ public class MCCanvas extends Canvas {
 		this.tessellator = tessellator;
 	}
 
-	public double tx() {
-		return state.tx;
-	}
-
-	public double ty() {
-		return state.ty;
-	}
-
 	@Override
 	public void bindTexture(Texture texture) {
 		Minecraft.getMinecraft().renderEngine.bindTexture(new ResourceLocation(texture.getResource()));
-	}
-
-	@Override
-	public void rotate(double angle) {
-		GL11.glRotated(angle, 0, 0, 1);
-		super.rotate(angle);
 	}
 
 	@Override
@@ -48,12 +34,12 @@ public class MCCanvas extends Canvas {
 
 	@Override
 	public void addVertex(double x, double y) {
-		tessellator.addVertex(x + state.tx, y + state.ty, state.zIndex);
+		tessellator.addVertex(x, y, state.zIndex);
 	}
 
 	@Override
 	public void addVertexWithUV(double x, double y, double u, double v) {
-		tessellator.addVertexWithUV(x + state.tx, y + state.ty, state.zIndex, u, v);
+		tessellator.addVertexWithUV(x, y, state.zIndex, u, v);
 	}
 
 	@Override
@@ -63,13 +49,27 @@ public class MCCanvas extends Canvas {
 	}
 
 	@Override
+	public void translate(double x, double y) {
+		super.translate(x, y);
+		GL11.glTranslated(x, y, 0);
+	}
+
+	@Override
+	public void rotate(double angle) {
+		GL11.glRotated(angle, 0, 0, 1);
+		super.rotate(angle);
+	}
+
+	@Override
+	public void push() {
+		super.push();
+		GL11.glPushMatrix();
+	}
+
+	@Override
 	public void pop() {
-		double angle = state.angle;
 		super.pop();
-		double newAngle = state.angle;
-		if (angle != newAngle) {
-			GL11.glRotated(newAngle - angle, 0, 0, 1);
-		}
+		GL11.glPopMatrix();
 		Spacing scissor = state.scissor;
 		GL11.glScissor(scissor.top(), scissor.right(), scissor.bottom(), scissor.left());
 	}

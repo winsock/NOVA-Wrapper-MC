@@ -44,9 +44,6 @@ class SimpleParagraph extends AbstractParagraph<Text> implements RenderedText {
 	public void draw(int x, int y, TextRenderer renderer) {
 		MCTextRenderer textRenderer = (MCTextRenderer) renderer;
 
-		x += textRenderer.canvas.tx();
-		y += textRenderer.canvas.ty();
-
 		GL11.glTranslatef(0, 0, textRenderer.zIndex);
 		int xOffset = 0;
 		int yOffset = 0;

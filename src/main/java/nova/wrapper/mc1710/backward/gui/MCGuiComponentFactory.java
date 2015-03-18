@@ -24,6 +24,6 @@ public class MCGuiComponentFactory extends GuiComponentFactory {
 		registerNativeComponent(NativeGuiComponent.class,
 				component -> new MCGuiComponent<GuiComponent<?, ?>>(component));
 		registerNativeComponent(NativeSlot.class,
-				component -> new MCSlot((Slot) component));
+				component -> new MCGuiSlot((Slot) component));
 	}
 }

@@ -11,6 +11,9 @@ import nova.core.gui.components.Button;
 import nova.core.gui.nativeimpl.NativeButton;
 import nova.core.gui.render.Graphics;
 import nova.core.util.transform.Vector2i;
+
+import org.lwjgl.opengl.GL11;
+
 import cpw.mods.fml.client.config.GuiButtonExt;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.relauncher.Side;
@@ -35,6 +38,8 @@ public class MCButton extends MCGuiComponent<Button> implements NativeButton, Dr
 	public void setOutline(Outline outline) {
 		button.width = outline.getWidth();
 		button.height = outline.getHeight();
+		button.xPosition = outline.x1i();
+		button.yPosition = outline.y1i();
 		super.setOutline(outline);
 	}
 
@@ -70,16 +75,14 @@ public class MCButton extends MCGuiComponent<Button> implements NativeButton, Dr
 	@Override
 	public void draw(int mouseX, int mouseY, float partial, Graphics graphics) {
 		button.drawButton(Minecraft.getMinecraft(), mouseX, mouseY);
-		getComponent().render(mouseX, mouseY, graphics);
+		super.draw(mouseX, mouseY, partial, graphics);
 	}
 
 	public void onMousePressed(MouseEvent event) {
 		if (event.state == EnumMouseState.DOWN) {
-			if (button.mousePressed(Minecraft.getMinecraft(), event.mouseX, event.mouseY)) {
+			if (getComponent().isMouseOver()) {
 				button.func_146113_a(Minecraft.getMinecraft().getSoundHandler());
 			}
-		} else if (event.state == EnumMouseState.UP) {
-			button.mouseReleased(event.mouseX, event.mouseY);
 		}
 	}
 
@@ -92,10 +95,9 @@ public class MCButton extends MCGuiComponent<Button> implements NativeButton, Dr
 
 		@Override
 		public void drawButton(Minecraft mc, int mouseX, int mouseY) {
-			MCCanvas canvas = getCanvas();
-			xPosition = (int) canvas.tx();
-			yPosition = (int) canvas.ty();
-			super.drawButton(mc, mouseX, mouseY);
+			GL11.glTranslatef(-xPosition, -yPosition, 0);
+			super.drawButton(mc, mouseX + xPosition, mouseY + yPosition);
+			GL11.glTranslatef(xPosition, yPosition, 0);
 		}
 	}
 }
