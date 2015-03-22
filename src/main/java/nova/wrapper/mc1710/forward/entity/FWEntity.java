@@ -15,7 +15,6 @@ import nova.wrapper.mc1710.util.DataUtility;
 
 /**
  * Entity wrapper
- *
  * @author Calclavia
  */
 public class FWEntity extends net.minecraft.entity.Entity implements EntityWrapper {
@@ -26,6 +25,11 @@ public class FWEntity extends net.minecraft.entity.Entity implements EntityWrapp
 	public FWEntity(World world, EntityFactory factory) {
 		super(world);
 		this.wrapped = factory.makeEntity(this, rigidBody);
+	}
+
+	public FWEntity(World world, Entity wrapped) {
+		super(world);
+		this.wrapped = wrapped;
 	}
 
 	@Override
@@ -65,7 +69,6 @@ public class FWEntity extends net.minecraft.entity.Entity implements EntityWrapp
 
 	/**
 	 * Entity Wrapper Methods
-	 *
 	 * @return
 	 */
 	@Override

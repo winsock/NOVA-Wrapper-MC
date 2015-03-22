@@ -18,7 +18,6 @@ import nova.wrapper.mc1710.backward.world.BWWorld;
 
 /**
  * A copy of BWEntity that extends EntityFX
- *
  * @author Calclavia
  */
 @SideOnly(Side.CLIENT)
@@ -45,6 +44,11 @@ public class FWEntityFX extends EntityFX implements EntityWrapper, RigidBody {
 	public FWEntityFX(World world, EntityFactory factory) {
 		super(world, 0, 0, 0);
 		this.wrapped = factory.makeEntity(this, this);
+	}
+
+	public FWEntityFX(World world, Entity entity) {
+		super(world, 0, 0, 0);
+		this.wrapped = entity;
 	}
 
 	/**
@@ -102,7 +106,6 @@ public class FWEntityFX extends EntityFX implements EntityWrapper, RigidBody {
 
 	/**
 	 * Entity Wrapper Methods
-	 *
 	 * @return
 	 */
 	@Override

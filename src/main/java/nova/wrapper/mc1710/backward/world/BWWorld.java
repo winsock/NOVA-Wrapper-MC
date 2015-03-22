@@ -62,6 +62,13 @@ public class BWWorld extends World {
 	}
 
 	@Override
+	public Entity createEntity(Entity entity) {
+		FWEntity bwEntity = new FWEntity(world, entity);
+		world.spawnEntityInWorld(bwEntity);
+		return bwEntity.wrapped;
+	}
+
+	@Override
 	public Entity createEntity(EntityFactory factory) {
 		FWEntity bwEntity = new FWEntity(world, factory);
 		world.spawnEntityInWorld(bwEntity);
@@ -71,6 +78,11 @@ public class BWWorld extends World {
 	@Override
 	public Entity createClientEntity(EntityFactory factory) {
 		return NovaMinecraft.proxy.spawnParticle(world, factory);
+	}
+
+	@Override
+	public Entity createClientEntity(Entity entity) {
+		return NovaMinecraft.proxy.spawnParticle(world, entity);
 	}
 
 	@Override

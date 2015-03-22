@@ -39,6 +39,10 @@ public class CommonProxy implements Loadable {
 		return null;
 	}
 
+	public Entity spawnParticle(net.minecraft.world.World world, Entity entity) {
+		return null;
+	}
+
 	public boolean isPaused() {
 		return false;
 	}
