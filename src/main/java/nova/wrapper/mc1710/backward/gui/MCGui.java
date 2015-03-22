@@ -7,6 +7,8 @@ import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
+import net.minecraft.inventory.Slot;
+import net.minecraft.item.ItemStack;
 import nova.core.game.Game;
 import nova.core.gui.Gui;
 import nova.core.gui.GuiComponent;
@@ -115,20 +117,12 @@ public class MCGui extends MCGuiContainer implements NativeGui, DrawableGuiCompo
 
 		Optional<Vector2i> preferredSize = getComponent().getPreferredSize();
 		if (preferredSize.isPresent()) {
-			// We have a preferred size so we can center the GUI and draw our
-			// fancy gray background.
+			// We have a preferred size so we can draw our fancy gray
+			// background.
 
-			Vector2i size = preferredSize.get();
-			int xOffset = getGuiScreen().width / 2 - size.xi() / 2;
-			int yOffset = getGuiScreen().height / 2 - size.yi() / 2;
-			GuiUtils.drawGUIWindow(xOffset - 4, yOffset - 4, size.xi() + 8, size.yi() + 8);
-
-			Vector2i oldSize = getOutline().getDimension();
-			setOutline(getOutline().setPosition(new Vector2i(xOffset, yOffset)).setDimension(size));
-
-			if (!oldSize.equals(size)) {
-				getComponent().revalidate();
-			}
+			Vector2i size = getOutline().getDimension();
+			Vector2i position = getOutline().getPosition();
+			GuiUtils.drawGUIWindow(position.x - 4, position.y - 4, size.xi() + 8, size.yi() + 8);
 		}
 
 		Outline guiOutline = getOutline();
@@ -153,6 +147,17 @@ public class MCGui extends MCGuiContainer implements NativeGui, DrawableGuiCompo
 			super.onContainerClosed(player);
 			getGui().component.unbind();
 		}
+
+		@Override
+		public Slot addSlotToContainer(Slot slot) {
+			return super.addSlotToContainer(slot);
+		}
+
+		@Override
+		public ItemStack transferStackInSlot(EntityPlayer player, int slot) {
+			// TODO Nothing here
+			return null;
+		}
 	}
 
 	private static final Container fakeContainer = new Container() {
@@ -167,6 +172,15 @@ public class MCGui extends MCGuiContainer implements NativeGui, DrawableGuiCompo
 
 		public MCGuiScreen() {
 			super(MCGui.this.container);
+		}
+
+		// TODO bridge, might want to use the AT for this?
+		public int guiLeft() {
+			return guiLeft;
+		}
+
+		public int guiTop() {
+			return guiTop;
 		}
 
 		@Override
@@ -192,11 +206,13 @@ public class MCGui extends MCGuiContainer implements NativeGui, DrawableGuiCompo
 		@Override
 		protected void mouseClicked(int mouseX, int mouseY, int button) {
 			onMousePressed(mouseX - getOutline().x1i(), mouseY - getOutline().y1i(), getMouseButton(button), true);
+			super.mouseClicked(mouseX, mouseY, button);
 		}
 
 		@Override
 		protected void mouseMovedOrUp(int mouseX, int mouseY, int button) {
 			onMousePressed(mouseX - getOutline().x1i(), mouseY - getOutline().y1i(), getMouseButton(button), false);
+			super.mouseMovedOrUp(mouseX, mouseY, button);
 		}
 
 		private EnumMouseButton getMouseButton(int button) {
@@ -230,8 +246,8 @@ public class MCGui extends MCGuiContainer implements NativeGui, DrawableGuiCompo
 
 		@Override
 		public void setWorldAndResolution(Minecraft mc, int width, int height) {
-			super.setWorldAndResolution(mc, width, height);
 
+			fontRendererObj = mc.fontRenderer;
 			MCCanvas canvas = new MCCanvas(width, height, Tessellator.instance);
 			if (textRenderer == null)
 				textRenderer = new MCTextRenderer(fontRendererObj, canvas);
@@ -243,8 +259,21 @@ public class MCGui extends MCGuiContainer implements NativeGui, DrawableGuiCompo
 			Outline oldOutline = outline;
 			outline = new Outline(0, 0, width, height);
 
-			if (resized)
+			if (resized) {
+				Optional<Vector2i> preferredSize = getComponent().getPreferredSize();
+				if (preferredSize.isPresent()) {
+					// Set the size to the preferred size and center the GUI
+					Vector2i size = preferredSize.get();
+					int xOffset = width / 2 - size.xi() / 2;
+					int yOffset = height / 2 - size.yi() / 2;
+					setOutline(getOutline().setPosition(new Vector2i(xOffset, yOffset)).setDimension(size));
+				}
 				onResized(oldOutline);
+			}
+
+			xSize = outline.getWidth();
+			ySize = outline.getHeight();
+			super.setWorldAndResolution(mc, width, height);
 		}
 
 		public MCGui getGui() {

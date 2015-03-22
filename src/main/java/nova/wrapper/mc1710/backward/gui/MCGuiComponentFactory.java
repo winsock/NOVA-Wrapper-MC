@@ -4,12 +4,14 @@ import nova.core.gui.AbstractGuiContainer;
 import nova.core.gui.Gui;
 import nova.core.gui.GuiComponent;
 import nova.core.gui.components.Button;
+import nova.core.gui.components.inventory.PlayerInventory;
 import nova.core.gui.components.inventory.Slot;
 import nova.core.gui.factory.GuiComponentFactory;
 import nova.core.gui.nativeimpl.NativeButton;
 import nova.core.gui.nativeimpl.NativeContainer;
 import nova.core.gui.nativeimpl.NativeGui;
 import nova.core.gui.nativeimpl.NativeGuiComponent;
+import nova.core.gui.nativeimpl.NativePlayerInventory;
 import nova.core.gui.nativeimpl.NativeSlot;
 
 public class MCGuiComponentFactory extends GuiComponentFactory {
@@ -25,5 +27,7 @@ public class MCGuiComponentFactory extends GuiComponentFactory {
 				component -> new MCGuiComponent<GuiComponent<?, ?>>(component));
 		registerNativeComponent(NativeSlot.class,
 				component -> new MCGuiSlot((Slot) component));
+		registerNativeComponent(NativePlayerInventory.class,
+				component -> new MCGuiPlayerInventory((PlayerInventory) component));
 	}
 }

@@ -19,6 +19,14 @@ public class MCCanvas extends Canvas {
 		this.tessellator = tessellator;
 	}
 
+	public double tx() {
+		return state.tx;
+	}
+
+	public double ty() {
+		return state.ty;
+	}
+
 	@Override
 	public void bindTexture(Texture texture) {
 		Minecraft.getMinecraft().renderEngine.bindTexture(new ResourceLocation(texture.getResource()));
@@ -56,8 +64,8 @@ public class MCCanvas extends Canvas {
 
 	@Override
 	public void rotate(double angle) {
-		GL11.glRotated(angle, 0, 0, 1);
 		super.rotate(angle);
+		GL11.glRotated(angle, 0, 0, 1);
 	}
 
 	@Override
