@@ -35,7 +35,7 @@ public class BWModel extends Model {
 						tessellator.setBrightness((int) face.getBrightness());
 					} else {
 						// Determine nearest adjacent block.
-						Vector3i nearestPos = face.getCenter().add(face.normal.divide(2)).round();
+						Vector3i nearestPos = face.getCenter().add(face.normal.divide(2)).floor();
 						Block block = blockAccess.getBlock(nearestPos.x, nearestPos.y, nearestPos.z);
 						try {
 							int brightness = block.getMixedBrightnessForBlock(blockAccess, nearestPos.x, nearestPos.y, nearestPos.z);
