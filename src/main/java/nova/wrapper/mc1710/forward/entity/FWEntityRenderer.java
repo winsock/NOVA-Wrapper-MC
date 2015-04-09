@@ -1,5 +1,10 @@
 package nova.wrapper.mc1710.forward.entity;
 
+import java.util.Optional;
+
+import org.lwjgl.opengl.GL11;
+
+import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.entity.Render;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.ResourceLocation;
@@ -7,6 +12,7 @@ import nova.core.util.transform.MatrixStack;
 import nova.wrapper.mc1710.backward.render.BWModel;
 
 /**
+ * Renders entities.
  * @author Calclavia
  */
 public class FWEntityRenderer extends Render {
@@ -25,7 +31,9 @@ public class FWEntityRenderer extends Render {
 		BWModel model = new BWModel();
 		model.matrix = new MatrixStack().translate(x, y, z).rotate(entity.rotation()).getMatrix();
 		entity.render(model);
-		model.renderWorld(wrapper.worldObj);
+		Tessellator.instance.startDrawingQuads();
+		model.render(Optional.of(renderManager));
+		Tessellator.instance.draw();
 	}
 
 	@Override

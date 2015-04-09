@@ -15,6 +15,7 @@ import nova.wrapper.mc1710.util.DataUtility;
 
 /**
  * Entity wrapper
+ * 
  * @author Calclavia
  */
 public class FWEntity extends net.minecraft.entity.Entity implements EntityWrapper {
@@ -25,16 +26,20 @@ public class FWEntity extends net.minecraft.entity.Entity implements EntityWrapp
 	public FWEntity(World world, EntityFactory factory) {
 		super(world);
 		this.wrapped = factory.makeEntity(this, rigidBody);
+		entityInit();
 	}
 
 	public FWEntity(World world, Entity wrapped) {
 		super(world);
 		this.wrapped = wrapped;
+		entityInit();
 	}
 
 	@Override
 	protected void entityInit() {
-		wrapped.awake();
+		// Sadly, Minecraft wants to wake us up before we're done wrapping...
+		if (wrapped != null)
+			wrapped.awake();
 	}
 
 	@Override
@@ -69,6 +74,7 @@ public class FWEntity extends net.minecraft.entity.Entity implements EntityWrapp
 
 	/**
 	 * Entity Wrapper Methods
+	 * 
 	 * @return
 	 */
 	@Override
@@ -93,7 +99,7 @@ public class FWEntity extends net.minecraft.entity.Entity implements EntityWrapp
 
 	@Override
 	public void setWorld(nova.core.world.World world) {
-		//TODO: Change entity's world
+		// TODO: Change entity's world
 	}
 
 	@Override

@@ -1,11 +1,17 @@
 package nova.wrapper.mc1710.backward.render;
 
+import java.util.Optional;
+
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.util.IIcon;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.IBlockAccess;
 import nova.core.block.BlockAccess;
 import nova.core.render.model.Model;
+import nova.core.render.texture.EntityTexture;
+import nova.core.render.texture.Texture;
 import nova.core.util.transform.Vector3i;
 import nova.wrapper.mc1710.render.RenderUtility;
 
@@ -78,7 +84,7 @@ public class BWModel extends Model {
 			);
 	}
 
-	public void render() {
+	public void render(Optional<RenderManager> entityTextureLoader) {
 		Tessellator tessellator = Tessellator.instance;
 		tessellator.setColorRGBA_F(1, 1, 1, 1);
 
@@ -100,10 +106,24 @@ public class BWModel extends Model {
 					tessellator.setNormal(face.normal.xf(), face.normal.yf(), face.normal.zf());
 
 					if (face.texture.isPresent()) {
+						if (entityTextureLoader.isPresent())
+						{
+							if (face.texture.get() instanceof EntityTexture)
+							{
+								//We're not working on an atlas, so just do... this.
+								Texture t=face.texture.get();
+								entityTextureLoader.get().renderEngine.bindTexture(new ResourceLocation(t.domain, "textures/entity/" + t.resource + ".png"));
+							}
+						}
 						IIcon icon = RenderUtility.instance.getIcon(face.texture.get());
 						face.vertices.forEach(v -> {
 							tessellator.setColorRGBA(v.color.red(), v.color.green(), v.color.blue(), v.color.alpha());
-							tessellator.addVertexWithUV(v.vec.x, v.vec.y, v.vec.z, icon.getInterpolatedU(16 * v.uv.x), icon.getInterpolatedV(16 * v.uv.y));
+							if (icon!=null)
+							{
+								tessellator.addVertexWithUV(v.vec.x, v.vec.y, v.vec.z, icon.getInterpolatedU(16 * v.uv.x), icon.getInterpolatedV(16 * v.uv.y));
+							} else {
+								tessellator.addVertexWithUV(v.vec.x, v.vec.y, v.vec.z, v.uv.x, v.uv.y);
+							}
 						});
 					} else {
 						face.vertices.forEach(v -> {
