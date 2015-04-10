@@ -1,6 +1,7 @@
 package nova.wrapper.mc1710.launcher;
 
 import java.io.File;
+import java.util.List;
 import java.util.Set;
 
 import net.minecraftforge.common.MinecraftForge;
@@ -84,11 +85,12 @@ public class NovaMinecraft {
 		OreDictionaryIntegration.instance.registerOreDictionary();
 		MinecraftRecipeRegistry.instance.registerRecipes();
 		NativeConverters.registerConverters(Game.instance.nativeManager);
-		
+
+		launcher.generateDependencies();
 		try {
-			for (MavenDependency[] dependencies : launcher.getNeededDeps().values()) {
+			for (List<MavenDependency> dependencies : launcher.getNeededDeps().values()) {
 				for (MavenDependency dep : dependencies) {
-					DepDownloader.downloadDepdency(dep.getDownloadURL(), FMLInjectionData.data()[6] + "/mods/" + dep.getDownloadURL().getFile().substring(dep.getDownloadURL().getFile().lastIndexOf("/")));
+					DepDownloader.downloadDepdency(dep.getDownloadURL(), FMLInjectionData.data()[6] + "/mods/" + dep.getPath());
 				}
 			}
 		} catch (Exception e) {
