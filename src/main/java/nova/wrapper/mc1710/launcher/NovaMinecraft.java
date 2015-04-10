@@ -24,6 +24,7 @@ import nova.wrapper.mc1710.forward.block.BlockWrapperRegistry;
 import nova.wrapper.mc1710.item.ItemWrapperRegistry;
 import nova.wrapper.mc1710.item.OreDictionaryIntegration;
 import nova.wrapper.mc1710.manager.config.ConfigManager;
+import nova.wrapper.mc1710.nativewrapper.NativeConverters;
 import nova.wrapper.mc1710.recipes.MinecraftRecipeRegistry;
 import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.Mod;
@@ -82,7 +83,8 @@ public class NovaMinecraft {
 		ItemWrapperRegistry.instance.registerItems();
 		OreDictionaryIntegration.instance.registerOreDictionary();
 		MinecraftRecipeRegistry.instance.registerRecipes();
-
+		NativeConverters.registerConverters(Game.instance.nativeManager);
+		
 		try {
 			for (MavenDependency[] dependencies : launcher.getNeededDeps().values()) {
 				for (MavenDependency dep : dependencies) {
