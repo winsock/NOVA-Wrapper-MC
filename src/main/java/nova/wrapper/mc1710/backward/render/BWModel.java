@@ -1,7 +1,5 @@
 package nova.wrapper.mc1710.backward.render;
 
-import java.util.Optional;
-
 import net.minecraft.block.Block;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.entity.RenderManager;
@@ -15,6 +13,8 @@ import nova.core.render.texture.Texture;
 import nova.core.util.transform.Vector3i;
 import nova.wrapper.mc1710.render.RenderUtility;
 
+import java.util.Optional;
+
 /**
  * @author Calclavia
  */
@@ -22,7 +22,6 @@ public class BWModel extends Model {
 
 	/**
 	 * Completes this rendering for a block.
-	 *
 	 * @param blockAccess {@link BlockAccess}
 	 */
 	public void renderWorld(IBlockAccess blockAccess) {
@@ -81,7 +80,11 @@ public class BWModel extends Model {
 						});
 					}
 				})
-			);
+		);
+	}
+
+	public void render() {
+		render(Optional.empty());
 	}
 
 	public void render(Optional<RenderManager> entityTextureLoader) {
@@ -106,20 +109,17 @@ public class BWModel extends Model {
 					tessellator.setNormal(face.normal.xf(), face.normal.yf(), face.normal.zf());
 
 					if (face.texture.isPresent()) {
-						if (entityTextureLoader.isPresent())
-						{
-							if (face.texture.get() instanceof EntityTexture)
-							{
+						if (entityTextureLoader.isPresent()) {
+							if (face.texture.get() instanceof EntityTexture) {
 								//We're not working on an atlas, so just do... this.
-								Texture t=face.texture.get();
+								Texture t = face.texture.get();
 								entityTextureLoader.get().renderEngine.bindTexture(new ResourceLocation(t.domain, "textures/entity/" + t.resource + ".png"));
 							}
 						}
 						IIcon icon = RenderUtility.instance.getIcon(face.texture.get());
 						face.vertices.forEach(v -> {
 							tessellator.setColorRGBA(v.color.red(), v.color.green(), v.color.blue(), v.color.alpha());
-							if (icon!=null)
-							{
+							if (icon != null) {
 								tessellator.addVertexWithUV(v.vec.x, v.vec.y, v.vec.z, icon.getInterpolatedU(16 * v.uv.x), icon.getInterpolatedV(16 * v.uv.y));
 							} else {
 								tessellator.addVertexWithUV(v.vec.x, v.vec.y, v.vec.z, v.uv.x, v.uv.y);
@@ -132,7 +132,7 @@ public class BWModel extends Model {
 						});
 					}
 				})
-			);
+		);
 	}
 
 	public int getAoBrightness(int a, int b, int c, int d) {
