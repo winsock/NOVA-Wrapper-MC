@@ -1,15 +1,10 @@
 package nova.wrapper.mc1710.forward.block;
 
-import static org.lwjgl.opengl.GL11.GL_TEXTURE_BIT;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
-import java.util.stream.Collectors;
-
+import cpw.mods.fml.client.registry.ISimpleBlockRenderingHandler;
+import cpw.mods.fml.client.registry.RenderingRegistry;
+import cpw.mods.fml.common.FMLCommonHandler;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.block.material.Material;
 import net.minecraft.client.renderer.RenderBlocks;
 import net.minecraft.client.renderer.Tessellator;
@@ -26,14 +21,12 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.client.IItemRenderer;
 import nova.core.block.Block;
-import nova.core.block.BlockAccess;
 import nova.core.block.BlockChanger;
 import nova.core.block.BlockFactory;
-import nova.core.block.components.DynamicallyModelled;
+import nova.core.block.components.ItemRenderer;
 import nova.core.block.components.LightEmitter;
-import nova.core.block.components.Modelled;
 import nova.core.block.components.Stateful;
-import nova.core.render.model.BlockModelUtil;
+import nova.core.block.components.StaticRenderer;
 import nova.core.render.texture.Texture;
 import nova.core.retention.Storable;
 import nova.core.util.Direction;
@@ -49,25 +42,24 @@ import nova.wrapper.mc1710.backward.world.BWBlockAccess;
 import nova.wrapper.mc1710.forward.util.FWCuboid;
 import nova.wrapper.mc1710.item.ItemWrapperRegistry;
 import nova.wrapper.mc1710.render.RenderUtility;
-
-import org.apache.commons.logging.impl.Log4JLogger;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
-import org.slf4j.LoggerFactory;
 
-import cpw.mods.fml.client.registry.ISimpleBlockRenderingHandler;
-import cpw.mods.fml.client.registry.RenderingRegistry;
-import cpw.mods.fml.common.FMLCommonHandler;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+import static org.lwjgl.opengl.GL11.GL_TEXTURE_BIT;
 
 /**
  * A Minecraft to Nova block wrapper
- *
  * @author Calclavia
  */
-public class FWBlock extends net.minecraft.block.Block implements
-		ISimpleBlockRenderingHandler, IItemRenderer {
+public class FWBlock extends net.minecraft.block.Block implements ISimpleBlockRenderingHandler, IItemRenderer {
 	public final Block block;
 	/**
 	 * Reference to the wrapper Nova block
@@ -80,7 +72,7 @@ public class FWBlock extends net.minecraft.block.Block implements
 
 	private Map<BlockPosition, Block> harvestedBlocks = new HashMap<>();
 
-	// TODO: Resolve unknown material issue
+	//TODO: Resolve unknown material issue
 	public FWBlock(BlockFactory factory) {
 		super(Material.piston);
 		this.factory = factory;
@@ -97,19 +89,15 @@ public class FWBlock extends net.minecraft.block.Block implements
 		}
 	}
 
-	public Block getBlockInstance(net.minecraft.world.IBlockAccess access,
-			Vector3i position) {
+	public Block getBlockInstance(net.minecraft.world.IBlockAccess access, Vector3i position) {
 		/**
-		 * If this block has a TileEntity, forward the method into the Stateful
-		 * block. Otherwise, create a new instance of the block and forward the
-		 * methods over.
+		 * If this block has a TileEntity, forward the method into the Stateful block.
+		 * Otherwise, create a new instance of the block and forward the methods over.
 		 */
 		if (hasTileEntity(0)) {
-			FWTile tileWrapper = ((FWTile) access.getTileEntity(position.x,
-					position.y, position.z));
+			FWTile tileWrapper = ((FWTile) access.getTileEntity(position.x, position.y, position.z));
 			if (tileWrapper != null && tileWrapper.getBlock() != null) {
-				return ((FWTile) access.getTileEntity(position.x, position.y,
-						position.z)).getBlock();
+				return ((FWTile) access.getTileEntity(position.x, position.y, position.z)).getBlock();
 			}
 
 			System.out.println("Error: Block in TileWrapper is null.");
@@ -118,31 +106,23 @@ public class FWBlock extends net.minecraft.block.Block implements
 
 	}
 
-	public Block getBlockInstance(nova.core.block.BlockAccess access,
-			Vector3i position) {
+	public Block getBlockInstance(nova.core.block.BlockAccess access, Vector3i position) {
 		return factory.makeBlock(access, position);
 	}
 
 	@Override
-	public void onBlockHarvested(World world, int x, int y, int z, int meta,
-			EntityPlayer player) {
-		// HACK: called before block is destroyed by the player prior to the
-		// player getting the drops. Determine drops here.
-		// hack is needed because the player sets the block to air *before*
-		// getting the drops. woo good logic from mojang.
+	public void onBlockHarvested(World world, int x, int y, int z, int meta, EntityPlayer player) {
+		// HACK: called before block is destroyed by the player prior to the player getting the drops. Determine drops here.
+		// hack is needed because the player sets the block to air *before* getting the drops. woo good logic from mojang.
 		if (!player.capabilities.isCreativeMode) {
-			harvestedBlocks.put(new BlockPosition(world, x, y, z),
-					getBlockInstance(world, new Vector3i(x, y, z)));
+			harvestedBlocks.put(new BlockPosition(world, x, y, z), getBlockInstance(world, new Vector3i(x, y, z)));
 		}
 	}
 
 	@Override
 	public boolean hasTileEntity(int metadata) {
-		// A block requires a TileEntity if it stores data or if it ticks.
-		return Storable.class.isAssignableFrom(blockClass)
-				|| Stateful.class.isAssignableFrom(blockClass)
-				|| Updater.class.isAssignableFrom(blockClass)
-				|| DynamicallyModelled.class.isAssignableFrom(blockClass);
+		//A block requires a TileEntity if it stores data or if it ticks.
+		return Storable.class.isAssignableFrom(blockClass) || Stateful.class.isAssignableFrom(blockClass) || Updater.class.isAssignableFrom(blockClass);
 	}
 
 	@Override
@@ -152,8 +132,7 @@ public class FWBlock extends net.minecraft.block.Block implements
 
 	@Override
 	public IIcon getIcon(IBlockAccess access, int x, int y, int z, int side) {
-		Optional<Texture> texture = getBlockInstance(access,
-				new Vector3i(x, y, z)).getTexture(Direction.values()[side]);
+		Optional<Texture> texture = getBlockInstance(access, new Vector3i(x, y, z)).getTexture(Direction.values()[side]);
 		if (texture.isPresent()) {
 			return RenderUtility.instance.getIcon(texture.get());
 		}
@@ -169,42 +148,29 @@ public class FWBlock extends net.minecraft.block.Block implements
 		return null;
 	}
 
-	// TODO: This method seems to only be invoked when a TileEntity changes, not
-	// when blocks change!
+	//TODO: This method seems to only be invoked when a TileEntity changes, not when blocks change!
 	@Override
-	public void onNeighborChange(IBlockAccess access, int x, int y, int z,
-			int tileX, int tileY, int tileZ) {
-		getBlockInstance(access, new Vector3i(x, y, z)).onNeighborChange(
-				new Vector3i(tileX, tileY, tileZ));
+	public void onNeighborChange(IBlockAccess access, int x, int y, int z, int tileX, int tileY, int tileZ) {
+		getBlockInstance(access, new Vector3i(x, y, z)).onNeighborChange(new Vector3i(tileX, tileY, tileZ));
 	}
 
 	@Override
-	public void onBlockPlacedBy(World world, int x, int y, int z,
-			EntityLivingBase entity, ItemStack itemStack) {
-		getBlockInstance(world, new Vector3i(x, y, z)).onPlaced(
-				new BlockChanger.Entity(BackwardProxyUtil
-					.getEntityWrapper(entity)));
-		// TODO: Should we consider onBlockPlaced also?
+	public void onBlockPlacedBy(World world, int x, int y, int z, EntityLivingBase entity, ItemStack itemStack) {
+		getBlockInstance(world, new Vector3i(x, y, z)).onPlaced(new BlockChanger.Entity(BackwardProxyUtil.getEntityWrapper(entity)));
+		//TODO: Should we consider onBlockPlaced also?
 	}
 
 	@Override
-	public void breakBlock(World world, int x, int y, int z,
-			net.minecraft.block.Block block, int i) {
-		getBlockInstance(world, new Vector3i(x, y, z)).onRemoved(
-				new BlockChanger.Unknown());
+	public void breakBlock(World world, int x, int y, int z, net.minecraft.block.Block block, int i) {
+		getBlockInstance(world, new Vector3i(x, y, z)).onRemoved(new BlockChanger.Unknown());
 		super.breakBlock(world, x, y, z, block, i);
 	}
 
 	@Override
-	public void onBlockClicked(World world, int x, int y, int z,
-			EntityPlayer player) {
-		// TODO: Check this raytrace.
+	public void onBlockClicked(World world, int x, int y, int z, EntityPlayer player) {
+		//TODO: Check this raytrace.
 		MovingObjectPosition mop = player.rayTrace(10, 1);
-		getBlockInstance(world, new Vector3i(x, y, z)).onLeftClick(
-				BackwardProxyUtil.getEntityWrapper(player),
-				mop.sideHit,
-				new Vector3d(mop.hitVec.xCoord, mop.hitVec.yCoord,
-						mop.hitVec.zCoord));
+		getBlockInstance(world, new Vector3i(x, y, z)).onLeftClick(BackwardProxyUtil.getEntityWrapper(player), mop.sideHit, new Vector3d(mop.hitVec.xCoord, mop.hitVec.yCoord, mop.hitVec.zCoord));
 	}
 
 	@Override
@@ -213,36 +179,31 @@ public class FWBlock extends net.minecraft.block.Block implements
 	}
 
 	@Override
-	public boolean onBlockActivated(World world, int x, int y, int z,
-			EntityPlayer player, int side, float hitX, float hitY, float hitZ) {
-		return getBlockInstance(world, new Vector3i(x, y, z)).onRightClick(
-				BackwardProxyUtil.getEntityWrapper(player), side,
-				new Vector3d(hitX, hitY, hitZ));
+	public boolean onBlockActivated(World world, int x, int y, int z, EntityPlayer player, int side, float hitX, float hitY, float hitZ) {
+		return getBlockInstance(world, new Vector3i(x, y, z)).onRightClick(BackwardProxyUtil.getEntityWrapper(player), side, new Vector3d(hitX, hitY, hitZ));
 	}
 
 	@Override
-	public void onEntityCollidedWithBlock(World world, int x, int y, int z,
-			Entity entity) {
-		getBlockInstance(world, new Vector3i(x, y, z)).onEntityCollide(
-				BackwardProxyUtil.getEntityWrapper(entity));
+	public void onEntityCollidedWithBlock(World world, int x, int y, int z, Entity entity) {
+		getBlockInstance(world, new Vector3i(x, y, z)).onEntityCollide(BackwardProxyUtil.getEntityWrapper(entity));
 	}
 
 	@Override
-	public void addCollisionBoxesToList(World world, int x, int y, int z,
-			AxisAlignedBB aabb, List list, Entity entity) {
+	public void addCollisionBoxesToList(World world, int x, int y, int z, AxisAlignedBB aabb, List list, Entity entity) {
 		Set<Cuboid> boxes = getBlockInstance(world, new Vector3i(x, y, z))
-			.getCollidingBoxes(
-					new BWCuboid(aabb),
-					entity != null ? Optional.of(BackwardProxyUtil
-						.getEntityWrapper(entity)) : Optional.empty());
+			.getCollidingBoxes(new BWCuboid(aabb), entity != null ? Optional.of(BackwardProxyUtil.getEntityWrapper(entity)) : Optional.empty());
 
-		list.addAll(boxes.stream().map(c -> c.add(new Vector3i(x, y, z)))
-			.map(FWCuboid::new).collect(Collectors.toList()));
+		list.addAll(
+			boxes
+				.stream()
+				.map(c -> c.add(new Vector3i(x, y, z)))
+				.map(FWCuboid::new)
+				.collect(Collectors.toList())
+		);
 	}
 
 	@Override
-	public ArrayList<ItemStack> getDrops(World world, int x, int y, int z,
-			int metadata, int fortune) {
+	public ArrayList<ItemStack> getDrops(World world, int x, int y, int z, int metadata, int fortune) {
 		Block block;
 
 		// see onBlockHarvested for why the harvestedBlocks hack exists
@@ -254,9 +215,10 @@ public class FWBlock extends net.minecraft.block.Block implements
 			block = getBlockInstance(world, new Vector3i(x, y, z));
 		}
 
-		return block.getDrops().stream()
-			.map(ItemWrapperRegistry.instance::getMCItemStack)
-			.collect(Collectors.toCollection(ArrayList::new));
+		return block.getDrops()
+					.stream()
+					.map(ItemWrapperRegistry.instance::getMCItemStack)
+					.collect(Collectors.toCollection(ArrayList::new));
 	}
 
 	@Override
@@ -274,17 +236,14 @@ public class FWBlock extends net.minecraft.block.Block implements
 	}
 
 	@Override
-	public AxisAlignedBB getSelectedBoundingBoxFromPool(World world, int x,
-			int y, int z) {
-		return new FWCuboid(getBlockInstance(world, new Vector3i(x, y, z))
-			.getBoundingBox().add(new Vector3i(x, y, z)));
+	public AxisAlignedBB getSelectedBoundingBoxFromPool(World world, int x, int y, int z) {
+		return new FWCuboid(getBlockInstance(world, new Vector3i(x, y, z)).getBoundingBox().add(new Vector3i(x, y, z)));
 	}
 
 	@Override
 	public int getLightValue(IBlockAccess access, int x, int y, int z) {
 		if (block instanceof LightEmitter) {
-			return Math.round(((LightEmitter) getBlockInstance(access,
-					new Vector3i(x, y, z))).getEmittedLightLevel() * 15.0F);
+			return Math.round(((LightEmitter) getBlockInstance(access, new Vector3i(x, y, z))).getEmittedLightLevel() * 15.0F);
 		} else {
 			return 0;
 		}
@@ -295,34 +254,20 @@ public class FWBlock extends net.minecraft.block.Block implements
 	 */
 	@Override
 	public int getRenderType() {
-		return (block instanceof Modelled) ? blockRenderingID : 0;
+		return blockRenderingID;
 	}
 
 	@SideOnly(Side.CLIENT)
 	@Override
-	public void renderInventoryBlock(net.minecraft.block.Block block,
-			int metadata, int modelId, RenderBlocks renderer) {
-		// DONE: We should use the item renderer.
-		// (We now do by telling Forge not to use this function if we're not
-		// Modelled.)
+	public void renderInventoryBlock(net.minecraft.block.Block block, int metadata, int modelId, RenderBlocks renderer) {
+		//TODO: We should use the item renderer.
 		GL11.glPushAttrib(GL_TEXTURE_BIT);
 		GL11.glEnable(GL12.GL_RESCALE_NORMAL);
 		GL11.glPushMatrix();
 		Tessellator.instance.startDrawingQuads();
 		BWModel artist = new BWModel();
-		if (this.block instanceof Modelled) {
-			((Modelled) this.block).renderItem(artist);
-		} else {
-			// For now, use the fallback. This shouldn't happen(see
-			// handleRenderType), but try to avoid failure.
-			LoggerFactory
-				.getLogger("General")
-				.warn("The block: \""
-						+ this.block.getID()
-						+ "\" is being custom-rendered as an item, despite not being Modellable.");
-			BlockModelUtil.drawBlock(artist, this.block);
-		}
-		artist.render(Optional.empty());
+		((ItemRenderer) this.block).renderItem(artist);
+		artist.render();
 		Tessellator.instance.draw();
 		GL11.glPopMatrix();
 		GL11.glPopAttrib();
@@ -330,24 +275,11 @@ public class FWBlock extends net.minecraft.block.Block implements
 
 	@SideOnly(Side.CLIENT)
 	@Override
-	public boolean renderWorldBlock(IBlockAccess world, int x, int y, int z,
-			net.minecraft.block.Block block, int modelId, RenderBlocks renderer) {
+	public boolean renderWorldBlock(IBlockAccess world, int x, int y, int z, net.minecraft.block.Block block, int modelId, RenderBlocks renderer) {
 		BWModel model = new BWModel();
-		model.matrix = new MatrixStack().translate(x + 0.5, y + 0.5, z + 0.5)
-			.getMatrix();
-		if (this.block instanceof Modelled) {
-			((Modelled) getBlockInstance(world, new Vector3i(x, y, z)))
-				.renderStatic(model);
-		} else {
-			// For now, use the fallback to avoid failing, and log this.
-			LoggerFactory
-				.getLogger("General")
-				.warn("The block: \""
-						+ this.block.getID()
-						+ "\" is being custom-rendered in the world, despite not being Modellable.");
-			BlockModelUtil.drawBlock(model,
-					getBlockInstance(world, new Vector3i(x, y, z)));
-		}
+		model.matrix = new MatrixStack().translate(x + 0.5, y + 0.5, z + 0.5).getMatrix();
+		Block blockInstance = getBlockInstance(world, new Vector3i(x, y, z));
+		((StaticRenderer) blockInstance).renderStatic(model);
 		model.renderWorld(world);
 		return false;
 	}
@@ -366,32 +298,27 @@ public class FWBlock extends net.minecraft.block.Block implements
 
 	@Override
 	public boolean handleRenderType(ItemStack item, ItemRenderType type) {
-		return block instanceof Modelled;
+		return true;
 	}
 
 	@Override
-	public boolean shouldUseRenderHelper(ItemRenderType type, ItemStack item,
-			ItemRendererHelper helper) {
+	public boolean shouldUseRenderHelper(ItemRenderType type, ItemStack item, ItemRendererHelper helper) {
 		return true;
 	}
 
 	@Override
 	public void renderItem(ItemRenderType type, ItemStack item, Object... data) {
-		// TODO: Use this
+		//TODO: Use this
 	}
 
 	@Override
-	public float getExplosionResistance(Entity expEntity, World world, int x,
-			int y, int z, double explosionX, double p_explosionresistance,
-			double explosionY) {
-		// TODO: Maybe do something with these parameters.
-		return (float) getBlockInstance(world, new Vector3i(x, y, z))
-			.getResistance() * 30;
+	public float getExplosionResistance(Entity expEntity, World world, int x, int y, int z, double explosionX, double p_explosionresistance, double explosionY) {
+		//TODO: Maybe do something with these parameters.
+		return (float) getBlockInstance(world, new Vector3i(x, y, z)).getResistance() * 30;
 	}
 
 	@Override
 	public float getBlockHardness(World world, int x, int y, int z) {
-		return (float) getBlockInstance(world, new Vector3i(x, y, z))
-			.getHardness() * 2;
+		return (float) getBlockInstance(world, new Vector3i(x, y, z)).getHardness() * 2;
 	}
 }
