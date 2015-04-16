@@ -60,7 +60,7 @@ public class MCRigidBody implements RigidBody {
 		netForce = Vector3d.zero;
 
 		//Apply drag
-		addForce(velocity().inverse().multiply(drag));
+		addForce(velocity().negate().multiply(drag));
 		//Apply gravity
 		addForce(gravity.multiply(mass));
 	}
@@ -80,7 +80,7 @@ public class MCRigidBody implements RigidBody {
 
 		//Apply drag
 		Vector3d eulerAngularVel = angularVelocity.toEuler();
-		addTorque(eulerAngularVel.inverse().multiply(angularDrag));
+		addTorque(eulerAngularVel.negate().multiply(angularDrag));
 	}
 
 	@Override
