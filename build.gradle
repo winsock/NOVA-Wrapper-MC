@@ -50,13 +50,22 @@ repositories {
 }
 
 dependencies {
-    compile group: "nova.core", name: "NovaCore", version:"$config.nova.version", changing: true
+    compile group: "nova.core", name: "NovaCore", version: config.nova.version, changing: true
 
     testCompile "junit:junit:4.12"
     testCompile 'org.assertj:assertj-core:1.+'
+    testCompile group: "nova.core", name: "NovaCore", version: config.nova.version, classifier: "wrappertests", changing: true
 }
 
 compileJava {
+    sourceCompatibility = '1.8'
+    targetCompatibility = '1.8'
+    options.encoding = 'UTF-8'
+    options.fork = true
+    options.compilerArgs << '-Xlint'
+}
+
+compileTestJava {
     sourceCompatibility = '1.8'
     targetCompatibility = '1.8'
     options.encoding = 'UTF-8'
@@ -178,13 +187,17 @@ idea {
 }
 
 test {
+    forkEvery = 1
+    maxParallelForks = 4
+
     testLogging {
         exceptionFormat = 'full'
     }
 
     testLogging.showStandardStreams = true
 
-    beforeTest {descriptor ->
-        logger.lifecycle("Running " + descriptor)
+    beforeTest { descriptor ->
+        def classPadded = String.format("%-50s", descriptor.className)
+        logger.lifecycle("Running test ${classPadded} ${descriptor.name}()")
     }
 }
