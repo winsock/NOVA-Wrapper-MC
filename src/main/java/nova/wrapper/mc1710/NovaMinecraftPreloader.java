@@ -14,7 +14,6 @@ import cpw.mods.fml.common.event.FMLConstructionEvent;
 import cpw.mods.fml.relauncher.Side;
 import net.minecraft.client.resources.IResourcePack;
 import nova.core.loader.NovaMod;
-import nova.core.util.exception.NovaException;
 import nova.wrapper.mc1710.manager.config.ConfigManager;
 import nova.wrapper.mc1710.render.NovaFolderResourcePack;
 import nova.wrapper.mc1710.render.NovaResourcePack;
@@ -142,8 +141,7 @@ public class NovaMinecraftPreloader extends DummyModContainer {
 			});
 			resourcePackField.set(FMLClientHandler.instance(), packs);
 		} catch (Exception e) {
-			e.printStackTrace();
-			throw new NovaException();
+			throw new RuntimeException(e);
 		}
 	}
 
