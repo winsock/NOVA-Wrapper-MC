@@ -277,11 +277,13 @@ public class FWBlock extends net.minecraft.block.Block implements ISimpleBlockRe
 	@SideOnly(Side.CLIENT)
 	@Override
 	public boolean renderWorldBlock(IBlockAccess world, int x, int y, int z, net.minecraft.block.Block block, int modelId, RenderBlocks renderer) {
-		BWModel model = new BWModel();
-		model.matrix = new MatrixStack().translate(x + 0.5, y + 0.5, z + 0.5).getMatrix();
 		Block blockInstance = getBlockInstance(world, new Vector3i(x, y, z));
-		((StaticRenderer) blockInstance).renderStatic(model);
-		model.renderWorld(world);
+		if(blockInstance instanceof StaticRenderer) {
+			BWModel model = new BWModel();
+			model.matrix = new MatrixStack().translate(x + 0.5, y + 0.5, z + 0.5).getMatrix();
+			((StaticRenderer) blockInstance).renderStatic(model);
+			model.renderWorld(world);
+		}
 		return false;
 	}
 
