@@ -260,17 +260,18 @@ public class FWBlock extends net.minecraft.block.Block implements ISimpleBlockRe
 	@SideOnly(Side.CLIENT)
 	@Override
 	public void renderInventoryBlock(net.minecraft.block.Block block, int metadata, int modelId, RenderBlocks renderer) {
-		//TODO: We should use the item renderer.
-		GL11.glPushAttrib(GL_TEXTURE_BIT);
-		GL11.glEnable(GL12.GL_RESCALE_NORMAL);
-		GL11.glPushMatrix();
-		Tessellator.instance.startDrawingQuads();
-		BWModel artist = new BWModel();
-		((ItemRenderer) this.block).renderItem(artist);
-		artist.render();
-		Tessellator.instance.draw();
-		GL11.glPopMatrix();
-		GL11.glPopAttrib();
+		if (this.block instanceof ItemRenderer) {
+			GL11.glPushAttrib(GL_TEXTURE_BIT);
+			GL11.glEnable(GL12.GL_RESCALE_NORMAL);
+			GL11.glPushMatrix();
+			Tessellator.instance.startDrawingQuads();
+			BWModel artist = new BWModel();
+			((ItemRenderer) this.block).renderItem(artist);
+			artist.render();
+			Tessellator.instance.draw();
+			GL11.glPopMatrix();
+			GL11.glPopAttrib();
+		}
 	}
 
 	@SideOnly(Side.CLIENT)
