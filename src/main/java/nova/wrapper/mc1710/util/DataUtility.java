@@ -17,14 +17,12 @@ import java.util.Set;
 
 /**
  * Utility that manages common NBT queueSave and load methods
- *
  * @author Calclavia
  */
 public class DataUtility {
 
 	/**
 	 * Converts a Map of objects into NBT.
-	 *
 	 * @param data Map
 	 * @return NBT
 	 */
@@ -56,7 +54,6 @@ public class DataUtility {
 
 	/**
 	 * Saves an unknown object to NBT
-	 *
 	 * @param tag - NBTTagCompound to queueSave the tag too
 	 * @param key - name to queueSave the object as
 	 * @param value - the actual object
@@ -64,8 +61,10 @@ public class DataUtility {
 	 */
 	public static NBTTagCompound save(NBTTagCompound tag, String key, Object value) {
 		if (value instanceof Boolean) {
+			tag.setBoolean("isBoolean", true);
 			tag.setBoolean(key, (boolean) value);
 		} else if (value instanceof Byte) {
+			tag.setBoolean("isBoolean", false);
 			tag.setByte(key, (byte) value);
 		} else if (value instanceof Short) {
 			tag.setShort(key, (short) value);
@@ -91,7 +90,6 @@ public class DataUtility {
 
 	/**
 	 * Reads an unknown object with a known name from NBT
-	 *
 	 * @param tag - tag to read the value from
 	 * @param key - name of the value
 	 * @return object or suggestionValue if nothing is found
@@ -111,7 +109,11 @@ public class DataUtility {
 			} else if (saveTag instanceof NBTTagShort) {
 				return tag.getShort(key);
 			} else if (saveTag instanceof NBTTagByte) {
-				return tag.getByte(key);
+				if (tag.getBoolean("isBoolean")) {
+					return tag.getBoolean(key);
+				} else {
+					return tag.getByte(key);
+				}
 			} else if (saveTag instanceof NBTTagLong) {
 				return tag.getLong(key);
 			} else if (saveTag instanceof NBTTagByteArray) {
