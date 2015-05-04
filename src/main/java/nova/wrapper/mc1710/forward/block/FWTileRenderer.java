@@ -1,11 +1,13 @@
 package nova.wrapper.mc1710.forward.block;
 
+import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.renderer.tileentity.TileEntitySpecialRenderer;
 import net.minecraft.tileentity.TileEntity;
 import nova.core.block.Block;
 import nova.core.block.components.DynamicRenderer;
-import nova.core.util.transform.MatrixStack;
 import nova.wrapper.mc1710.backward.render.BWModel;
+import nova.wrapper.mc1710.render.RenderUtility;
 
 /**
  * @author Calclavia
@@ -19,9 +21,14 @@ public class FWTileRenderer extends TileEntitySpecialRenderer {
 		Block block = ((FWTile) tile).getBlock();
 		if (block instanceof DynamicRenderer) {
 			BWModel model = new BWModel();
-			model.matrix = new MatrixStack().translate(x + 0.5, y + 0.5, z + 0.5).getMatrix();
+			model.translate(x + 0.5, y + 0.5, z + 0.5);
 			((DynamicRenderer) block).renderDynamic(model);
-			model.renderWorld(tile.getWorldObj());
+			bindTexture(TextureMap.locationBlocksTexture);
+			RenderUtility.enableBlending();
+			Tessellator.instance.startDrawingQuads();
+			model.render();
+			Tessellator.instance.draw();
+			RenderUtility.disableBlending();
 		}
 	}
 }
