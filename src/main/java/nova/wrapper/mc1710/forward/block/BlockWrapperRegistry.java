@@ -1,21 +1,23 @@
 package nova.wrapper.mc1710.forward.block;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Optional;
-
+import cpw.mods.fml.common.FMLCommonHandler;
+import cpw.mods.fml.common.registry.GameRegistry;
 import net.minecraft.creativetab.CreativeTabs;
+import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
 import nova.core.block.Block;
 import nova.core.block.BlockFactory;
 import nova.core.block.BlockManager;
 import nova.core.game.Game;
 import nova.core.util.Category;
+import nova.wrapper.mc1710.backward.block.BWBlock;
 import nova.wrapper.mc1710.item.FWItemBlock;
 import nova.wrapper.mc1710.launcher.NovaMinecraft;
 import nova.wrapper.mc1710.util.ModCreativeTab;
-import cpw.mods.fml.common.FMLCommonHandler;
-import cpw.mods.fml.common.registry.GameRegistry;
+
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Optional;
 
 /**
  * @author Calclavia
@@ -33,6 +35,16 @@ public class BlockWrapperRegistry {
 	 */
 	public void registerBlocks() {
 		BlockManager blockManager = Game.instance.blockManager;
+
+		//Register air block
+		BlockFactory airBlock = new BlockFactory(() -> new BWBlock(Blocks.air) {
+			@Override
+			public String getID() {
+				return "air";
+			}
+		});
+
+		blockManager.register(airBlock);
 
 		blockManager.registry.forEach(this::addNOVABlock);
 		blockManager.whenBlockRegistered(this::onBlockRegistered);
@@ -56,8 +68,8 @@ public class BlockWrapperRegistry {
 			//Add into creative tab
 			Category category = (Category) blockWrapper.block;
 			Optional<CreativeTabs> first = Arrays.stream(CreativeTabs.creativeTabArray)
-				.filter(tab -> tab.getTabLabel().equals(category.getCategory()))
-				.findFirst();
+												 .filter(tab -> tab.getTabLabel().equals(category.getCategory()))
+												 .findFirst();
 			if (first.isPresent()) {
 				blockWrapper.setCreativeTab(first.get());
 			} else {
