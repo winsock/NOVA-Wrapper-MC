@@ -52,7 +52,7 @@ public class ItemWrapperRegistry {
 		if (item instanceof BWItem) {
 			return ((BWItem) item).makeItemStack(item.count());
 		} else {
-			ItemFactory itemFactory = Game.instance.itemManager.getItemFactory(item.getID()).get();
+			ItemFactory itemFactory = Game.instance.itemManager.getItem(item.getID()).get();
 			LinkedNBTTagCompound tag = new LinkedNBTTagCompound(item);
 
 			MinecraftItemMapping mapping = get(itemFactory);
@@ -76,7 +76,7 @@ public class ItemWrapperRegistry {
 	}
 
 	public net.minecraft.item.ItemStack getMCItemStack(String id) {
-		return getMCItemStack(Game.instance.itemManager.getItemFactory(id).get().makeItem().setCount(1));
+		return getMCItemStack(Game.instance.itemManager.getItem(id).get().makeItem().setCount(1));
 	}
 
 	public nova.core.item.Item getNovaItemStack(net.minecraft.item.ItemStack itemStack) {
