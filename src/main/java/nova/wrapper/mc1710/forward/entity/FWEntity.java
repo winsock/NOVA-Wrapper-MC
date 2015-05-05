@@ -25,9 +25,9 @@ public class FWEntity extends net.minecraft.entity.Entity implements EntityWrapp
 	public final Entity wrapped;
 	private final MCRigidBody rigidBody = new MCRigidBody(this);
 
-	public FWEntity(World world, EntityFactory factory) {
+	public FWEntity(World world, EntityFactory factory, Object... args) {
 		super(world);
-		this.wrapped = factory.makeEntity(this);
+		this.wrapped = factory.makeEntity(this, args);
 		entityInit();
 	}
 

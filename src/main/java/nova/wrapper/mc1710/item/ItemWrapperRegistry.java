@@ -66,6 +66,19 @@ public class ItemWrapperRegistry {
 		}
 	}
 
+	public net.minecraft.item.ItemStack getMCItemStack(nova.core.item.ItemFactory itemFactory) {
+		LinkedNBTTagCompound tag = new LinkedNBTTagCompound(itemFactory.makeItem());
+
+		MinecraftItemMapping mapping = get(itemFactory);
+		if (mapping == null) {
+			throw new NovaException("Missing mapping for " + itemFactory.getID());
+		}
+
+		ItemStack result = new ItemStack(mapping.item, 1, mapping.meta);
+		result.setTagCompound(tag);
+		return result;
+	}
+
 	/**
 	 * Saves NOVA item into a Minecraft ItemStack.
 	 */

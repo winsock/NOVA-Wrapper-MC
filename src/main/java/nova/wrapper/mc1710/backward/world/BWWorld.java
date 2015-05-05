@@ -66,7 +66,8 @@ public class BWWorld extends World {
 	}
 
 	@Override
-	public boolean setBlock(Vector3i position, BlockFactory blockFactory) {
+	public boolean setBlock(Vector3i position, BlockFactory blockFactory, Object... args) {
+		//TODO: Implement object arguments
 		net.minecraft.block.Block mcBlock = BlockWrapperRegistry.instance.getMCBlock(blockFactory);
 		return world().setBlock(position.x, position.y, position.z, mcBlock != null ? mcBlock : Blocks.air);
 	}
@@ -77,31 +78,24 @@ public class BWWorld extends World {
 	}
 
 	@Override
-	public Entity createEntity(Entity entity) {
-		FWEntity bwEntity = new FWEntity(world(), entity);
+	public Entity addEntity(EntityFactory factory, Object... args) {
+		FWEntity bwEntity = new FWEntity(world(), factory, args);
 		world().spawnEntityInWorld(bwEntity);
 		return bwEntity.wrapped;
 	}
 
 	@Override
-	public Entity createEntity(EntityFactory factory) {
-		FWEntity bwEntity = new FWEntity(world(), factory);
-		world().spawnEntityInWorld(bwEntity);
-		return bwEntity.wrapped;
-	}
-
-	@Override
-	public Entity createClientEntity(EntityFactory factory) {
+	public Entity addClientEntity(EntityFactory factory) {
 		return NovaMinecraft.proxy.spawnParticle(world(), factory);
 	}
 
 	@Override
-	public Entity createClientEntity(Entity entity) {
+	public Entity addClientEntity(Entity entity) {
 		return NovaMinecraft.proxy.spawnParticle(world(), entity);
 	}
 
 	@Override
-	public void destroyEntity(Entity entity) {
+	public void removeEntity(Entity entity) {
 		world().removeEntity((FWEntity) entity.wrapper);
 	}
 
@@ -111,7 +105,7 @@ public class BWWorld extends World {
 	}
 
 	@Override
-	public Entity createEntity(Vector3d position, Item item) {
+	public Entity addEntity(Vector3d position, Item item) {
 		EntityItem entityItem = new EntityItem(world(), position.x, position.y, position.z, ItemWrapperRegistry.instance.getMCItemStack(item));
 		world().spawnEntityInWorld(entityItem);
 		return new BWEntity(entityItem);
