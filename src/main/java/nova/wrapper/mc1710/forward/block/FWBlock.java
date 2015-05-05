@@ -38,7 +38,7 @@ import nova.core.util.transform.Vector3i;
 import nova.wrapper.mc1710.backward.BackwardProxyUtil;
 import nova.wrapper.mc1710.backward.render.BWModel;
 import nova.wrapper.mc1710.backward.util.BWCuboid;
-import nova.wrapper.mc1710.backward.world.BWBlockAccess;
+import nova.wrapper.mc1710.backward.world.BWWorld;
 import nova.wrapper.mc1710.forward.util.FWCuboid;
 import nova.wrapper.mc1710.item.ItemWrapperRegistry;
 import nova.wrapper.mc1710.render.RenderUtility;
@@ -102,12 +102,12 @@ public class FWBlock extends net.minecraft.block.Block implements ISimpleBlockRe
 
 			System.out.println("Error: Block in TileWrapper is null.");
 		}
-		return getBlockInstance(new BWBlockAccess(access), position);
+		return getBlockInstance(new BWWorld(access), position);
 
 	}
 
-	public Block getBlockInstance(nova.core.block.BlockAccess access, Vector3i position) {
-		return factory.makeBlock(access, position);
+	public Block getBlockInstance(nova.core.world.World world, Vector3i position) {
+		return factory.makeBlock(new MCBlockWrapper(world, position));
 	}
 
 	@Override
@@ -278,7 +278,7 @@ public class FWBlock extends net.minecraft.block.Block implements ISimpleBlockRe
 	@Override
 	public boolean renderWorldBlock(IBlockAccess world, int x, int y, int z, net.minecraft.block.Block block, int modelId, RenderBlocks renderer) {
 		Block blockInstance = getBlockInstance(world, new Vector3i(x, y, z));
-		if(blockInstance instanceof StaticRenderer) {
+		if (blockInstance instanceof StaticRenderer) {
 			BWModel model = new BWModel();
 			model.matrix = new MatrixStack().translate(x + 0.5, y + 0.5, z + 0.5).getMatrix();
 			((StaticRenderer) blockInstance).renderStatic(model);

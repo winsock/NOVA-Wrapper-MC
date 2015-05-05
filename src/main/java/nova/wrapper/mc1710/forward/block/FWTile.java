@@ -50,7 +50,7 @@ public class FWTile extends TileEntity {
 			{
 				Optional<BlockFactory> blockFactory = Game.instance.blockManager.getBlockFactory(blockID);
 				if (blockFactory.isPresent()) {
-					block = blockFactory.get().makeBlock(new BWWorld(getWorldObj()), new Vector3i(xCoord, yCoord, zCoord));
+					block = blockFactory.get().makeBlock(new MCBlockWrapper(new BWWorld(getWorldObj()), new Vector3i(xCoord, yCoord, zCoord)));
 
 					if (cacheData != null && block instanceof Storable) {
 						((Storable) block).load(cacheData);

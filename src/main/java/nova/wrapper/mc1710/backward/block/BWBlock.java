@@ -8,7 +8,7 @@ import nova.core.block.components.LightEmitter;
 import nova.core.retention.Data;
 import nova.core.retention.Storable;
 import nova.core.retention.Stored;
-import nova.wrapper.mc1710.backward.world.BWBlockAccess;
+import nova.wrapper.mc1710.backward.world.BWWorld;
 import nova.wrapper.mc1710.util.DataUtility;
 
 public class BWBlock extends Block implements LightEmitter, Storable {
@@ -23,7 +23,7 @@ public class BWBlock extends Block implements LightEmitter, Storable {
 	}
 
 	private IBlockAccess getMcBlockAccess() {
-		return ((BWBlockAccess) blockAccess()).access;
+		return ((BWWorld) wrapper.world()).access;
 	}
 
 	private int getMetadata() {

@@ -6,7 +6,6 @@ import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.util.IIcon;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.IBlockAccess;
-import nova.core.block.BlockAccess;
 import nova.core.render.model.Model;
 import nova.core.render.texture.EntityTexture;
 import nova.core.render.texture.Texture;
@@ -22,7 +21,6 @@ public class BWModel extends Model {
 
 	/**
 	 * Completes this rendering for a block.
-	 * @param blockAccess {@link BlockAccess}
 	 */
 	public void renderWorld(IBlockAccess blockAccess) {
 		Tessellator tessellator = Tessellator.instance;
