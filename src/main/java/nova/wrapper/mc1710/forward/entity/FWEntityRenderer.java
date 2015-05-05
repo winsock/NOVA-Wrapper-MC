@@ -1,15 +1,14 @@
 package nova.wrapper.mc1710.forward.entity;
 
-import java.util.Optional;
-
-import org.lwjgl.opengl.GL11;
-
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.entity.Render;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.ResourceLocation;
+import nova.core.block.components.DynamicRenderer;
 import nova.core.util.transform.MatrixStack;
 import nova.wrapper.mc1710.backward.render.BWModel;
+
+import java.util.Optional;
 
 /**
  * Renders entities.
@@ -28,12 +27,14 @@ public class FWEntityRenderer extends Render {
 	}
 
 	private void render(Entity wrapper, nova.core.entity.Entity entity, double x, double y, double z) {
-		BWModel model = new BWModel();
-		model.matrix = new MatrixStack().translate(x, y, z).rotate(entity.rotation()).getMatrix();
-		entity.render(model);
-		Tessellator.instance.startDrawingQuads();
-		model.render(Optional.of(renderManager));
-		Tessellator.instance.draw();
+		if (entity instanceof DynamicRenderer) {
+			BWModel model = new BWModel();
+			model.matrix = new MatrixStack().translate(x, y, z).rotate(entity.rotation()).getMatrix();
+			((DynamicRenderer) entity).renderDynamic(model);
+			Tessellator.instance.startDrawingQuads();
+			model.render(Optional.of(renderManager));
+			Tessellator.instance.draw();
+		}
 	}
 
 	@Override

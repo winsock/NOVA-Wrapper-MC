@@ -5,6 +5,7 @@ import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.particle.EntityFX;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.world.World;
+import nova.core.block.components.DynamicRenderer;
 import nova.core.entity.Entity;
 import nova.core.entity.EntityFactory;
 import nova.core.entity.EntityWrapper;
@@ -56,10 +57,12 @@ public class FWEntityFX extends EntityFX implements EntityWrapper, RigidBody {
 	 */
 	@Override
 	public void renderParticle(Tessellator tess, float x, float y, float z, float p_70539_5_, float p_70539_6_, float p_70539_7_) {
-		BWModel model = new BWModel();
-		model.matrix = new MatrixStack().translate(x, y, z).rotate(rotation()).getMatrix();
-		wrapped.render(model);
-		model.renderWorld(worldObj);
+		if (wrapped instanceof DynamicRenderer) {
+			BWModel model = new BWModel();
+			model.matrix = new MatrixStack().translate(x, y, z).rotate(rotation()).getMatrix();
+			((DynamicRenderer) wrapped).renderDynamic(model);
+			model.renderWorld(worldObj);
+		}
 	}
 
 	@Override
