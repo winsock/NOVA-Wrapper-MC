@@ -4,6 +4,7 @@ import net.minecraft.entity.item.EntityItem;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.AxisAlignedBB;
 import nova.core.block.Block;
+import nova.core.block.BlockFactory;
 import nova.core.entity.Entity;
 import nova.core.entity.EntityFactory;
 import nova.core.game.Game;
@@ -65,8 +66,8 @@ public class BWWorld extends World {
 	}
 
 	@Override
-	public boolean setBlock(Vector3i position, Block block) {
-		net.minecraft.block.Block mcBlock = BlockWrapperRegistry.instance.getMCBlock(block);
+	public boolean setBlock(Vector3i position, BlockFactory blockFactory) {
+		net.minecraft.block.Block mcBlock = BlockWrapperRegistry.instance.getMCBlock(blockFactory);
 		return world().setBlock(position.x, position.y, position.z, mcBlock != null ? mcBlock : Blocks.air);
 	}
 

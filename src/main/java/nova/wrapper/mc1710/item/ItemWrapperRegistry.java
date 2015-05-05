@@ -6,7 +6,7 @@ import cpw.mods.fml.common.registry.GameRegistry;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import nova.core.block.Block;
+import nova.core.block.BlockFactory;
 import nova.core.game.Game;
 import nova.core.item.ItemBlock;
 import nova.core.item.ItemFactory;
@@ -143,8 +143,8 @@ public class ItemWrapperRegistry {
 		net.minecraft.item.Item itemWrapper;
 
 		if (itemFactory.getDummy() instanceof ItemBlock) {
-			Block block = ((ItemBlock) (itemFactory.getDummy())).block;
-			net.minecraft.block.Block mcBlock = BlockWrapperRegistry.instance.getMCBlock(block);
+			BlockFactory blockFactory = ((ItemBlock) (itemFactory.getDummy())).blockFactory;
+			net.minecraft.block.Block mcBlock = BlockWrapperRegistry.instance.getMCBlock(blockFactory);
 			itemWrapper = Item.getItemFromBlock(mcBlock);
 			if (itemWrapper == null) {
 				throw new NovaException("Missing block: " + itemFactory.getID());

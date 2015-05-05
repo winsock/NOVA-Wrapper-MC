@@ -15,7 +15,7 @@ public class MCItemFactory extends ItemFactory {
 	private final int meta;
 
 	public MCItemFactory(net.minecraft.item.Item item, int meta) {
-		super(() -> new BWItem(item, meta, null));
+		super((args) -> new BWItem(item, meta, null));
 
 		this.item = item;
 		this.meta = meta;
@@ -30,7 +30,7 @@ public class MCItemFactory extends ItemFactory {
 	}
 
 	@Override
-	public Item makeItem(Data data) {
+	public Item makeItem(Data data, Object... args) {
 		int meta = (Integer) data.getOrDefault("damage", this.meta);
 		NBTTagCompound nbtData = DataUtility.dataToNBT(data);
 		return new BWItem(item, meta, nbtData);

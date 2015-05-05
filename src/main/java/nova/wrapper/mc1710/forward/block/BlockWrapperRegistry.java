@@ -26,9 +26,9 @@ public class BlockWrapperRegistry {
 	public static final BlockWrapperRegistry instance = new BlockWrapperRegistry();
 
 	/**
-	 * A map of all blocks registered
+	 * A map of all blockFactory to MC blocks registered
 	 */
-	public final HashMap<Block, net.minecraft.block.Block> blockWrapperMap = new HashMap<>();
+	public final HashMap<BlockFactory, net.minecraft.block.Block> blockFactoryMap = new HashMap<>();
 
 	/**
 	 * Register all Nova blocks
@@ -37,7 +37,7 @@ public class BlockWrapperRegistry {
 		BlockManager blockManager = Game.instance.blockManager;
 
 		//Register air block
-		BlockFactory airBlock = new BlockFactory(() -> new BWBlock(Blocks.air) {
+		BlockFactory airBlock = new BlockFactory((args) -> new BWBlock(Blocks.air) {
 			@Override
 			public String getID() {
 				return "air";
@@ -50,8 +50,12 @@ public class BlockWrapperRegistry {
 		blockManager.whenBlockRegistered(this::onBlockRegistered);
 	}
 
+	public net.minecraft.block.Block getMCBlock(BlockFactory blockFactory) {
+		return blockFactoryMap.get(blockFactory);
+	}
+
 	public net.minecraft.block.Block getMCBlock(Block novaBlock) {
-		return blockWrapperMap.get(novaBlock);
+		return getMCBlock(novaBlock.factory());
 	}
 
 	private void onBlockRegistered(BlockManager.BlockRegisteredEvent event) {
@@ -60,7 +64,7 @@ public class BlockWrapperRegistry {
 
 	private void addNOVABlock(BlockFactory blockFactory) {
 		FWBlock blockWrapper = new FWBlock(blockFactory);
-		blockWrapperMap.put(blockWrapper.block, blockWrapper);
+		blockFactoryMap.put(blockFactory, blockWrapper);
 		NovaMinecraft.proxy.registerBlock(blockWrapper);
 		GameRegistry.registerBlock(blockWrapper, FWItemBlock.class, blockFactory.getID());
 
