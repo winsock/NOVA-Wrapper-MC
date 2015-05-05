@@ -3,7 +3,6 @@ package nova.wrapper.mc1710.backward.entity;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.util.DamageSource;
-import nova.core.entity.Entity;
 import nova.core.entity.components.Damageable;
 import nova.core.player.InventoryPlayer;
 import nova.core.player.Player;
@@ -48,14 +47,12 @@ public class BWEntityPlayer extends BWEntity implements Player, Damageable {
 	}
 
 	@Override
-	public Entity setPosition(Vector3d position) {
+	public void setPosition(Vector3d position) {
 		super.setPosition(position);
 
 		if (entity instanceof EntityPlayerMP) {
 			((EntityPlayerMP) entity).playerNetServerHandler.setPlayerLocation(position.x, position.y, position.z, entity.rotationYaw, entity.rotationPitch);
 		}
-
-		return this;
 	}
 
 	@Override

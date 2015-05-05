@@ -2,6 +2,7 @@ package nova.wrapper.mc1710.forward.entity;
 
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.world.World;
+import net.minecraftforge.common.DimensionManager;
 import nova.core.entity.Entity;
 import nova.core.entity.EntityFactory;
 import nova.core.entity.EntityWrapper;
@@ -13,9 +14,10 @@ import nova.core.util.transform.Vector3d;
 import nova.wrapper.mc1710.backward.world.BWWorld;
 import nova.wrapper.mc1710.util.DataUtility;
 
+import java.util.Arrays;
+
 /**
  * Entity wrapper
- * 
  * @author Calclavia
  */
 public class FWEntity extends net.minecraft.entity.Entity implements EntityWrapper {
@@ -25,7 +27,7 @@ public class FWEntity extends net.minecraft.entity.Entity implements EntityWrapp
 
 	public FWEntity(World world, EntityFactory factory) {
 		super(world);
-		this.wrapped = factory.makeEntity(this, rigidBody);
+		this.wrapped = factory.makeEntity(this);
 		entityInit();
 	}
 
@@ -38,8 +40,9 @@ public class FWEntity extends net.minecraft.entity.Entity implements EntityWrapp
 	@Override
 	protected void entityInit() {
 		// Sadly, Minecraft wants to wake us up before we're done wrapping...
-		if (wrapped != null)
+		if (wrapped != null) {
 			wrapped.awake();
+		}
 	}
 
 	@Override
@@ -74,14 +77,8 @@ public class FWEntity extends net.minecraft.entity.Entity implements EntityWrapp
 
 	/**
 	 * Entity Wrapper Methods
-	 * 
 	 * @return
 	 */
-	@Override
-	public boolean isValid() {
-		return !isDead;
-	}
-
 	@Override
 	public nova.core.world.World world() {
 		return new BWWorld(worldObj);
@@ -99,7 +96,14 @@ public class FWEntity extends net.minecraft.entity.Entity implements EntityWrapp
 
 	@Override
 	public void setWorld(nova.core.world.World world) {
-		// TODO: Change entity's world
+		travelToDimension(Arrays
+				.stream(DimensionManager.getWorlds())
+				.filter(w -> w.getProviderName().equals(world.getID()))
+				.findAny()
+				.get()
+				.provider
+				.dimensionId
+		);
 	}
 
 	@Override
@@ -111,5 +115,90 @@ public class FWEntity extends net.minecraft.entity.Entity implements EntityWrapp
 	public void setRotation(Quaternion rotation) {
 		Vector3d euler = rotation.toEuler();
 		setRotation((float) Math.toDegrees(euler.x), (float) Math.toDegrees(euler.y));
+	}
+
+	@Override
+	public double mass() {
+		return rigidBody.mass();
+	}
+
+	@Override
+	public void setMass(double mass) {
+		rigidBody.setMass(mass);
+	}
+
+	@Override
+	public Vector3d velocity() {
+		return rigidBody.velocity();
+	}
+
+	@Override
+	public void setVelocity(Vector3d velocity) {
+		rigidBody.setVelocity(velocity);
+	}
+
+	@Override
+	public double drag() {
+		return rigidBody.drag();
+	}
+
+	@Override
+	public void setDrag(double drag) {
+		rigidBody.setDrag(drag);
+	}
+
+	@Override
+	public Vector3d gravity() {
+		return rigidBody.gravity();
+	}
+
+	@Override
+	public void setGravity(Vector3d gravity) {
+		rigidBody.setGravity(gravity);
+	}
+
+	@Override
+	public double angularDrag() {
+		return rigidBody.angularDrag();
+	}
+
+	@Override
+	public void setAngularDrag(double angularDrag) {
+		rigidBody.setAngularDrag(angularDrag);
+	}
+
+	@Override
+	public Quaternion angularVelocity() {
+		return rigidBody.angularVelocity();
+	}
+
+	@Override
+	public void setAngularVelocity(Quaternion angularVelocity) {
+		rigidBody.setAngularVelocity(angularVelocity);
+	}
+
+	@Override
+	public Vector3d center() {
+		return rigidBody.center();
+	}
+
+	@Override
+	public void setCenter(Vector3d center) {
+		rigidBody.setCenter(center);
+	}
+
+	@Override
+	public void addForce(Vector3d force) {
+		rigidBody.addForce(force);
+	}
+
+	@Override
+	public void addForce(Vector3d force, Vector3d position) {
+		rigidBody.addForce(force, position);
+	}
+
+	@Override
+	public void addTorque(Vector3d torque) {
+		rigidBody.addTorque(torque);
 	}
 }

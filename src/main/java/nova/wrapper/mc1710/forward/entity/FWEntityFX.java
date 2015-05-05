@@ -9,7 +9,6 @@ import nova.core.block.components.DynamicRenderer;
 import nova.core.entity.Entity;
 import nova.core.entity.EntityFactory;
 import nova.core.entity.EntityWrapper;
-import nova.core.entity.RigidBody;
 import nova.core.util.components.Updater;
 import nova.core.util.transform.MatrixStack;
 import nova.core.util.transform.Quaternion;
@@ -22,7 +21,7 @@ import nova.wrapper.mc1710.backward.world.BWWorld;
  * @author Calclavia
  */
 @SideOnly(Side.CLIENT)
-public class FWEntityFX extends EntityFX implements EntityWrapper, RigidBody {
+public class FWEntityFX extends EntityFX implements EntityWrapper {
 
 	public final Entity wrapped;
 
@@ -44,7 +43,7 @@ public class FWEntityFX extends EntityFX implements EntityWrapper, RigidBody {
 
 	public FWEntityFX(World world, EntityFactory factory) {
 		super(world, 0, 0, 0);
-		this.wrapped = factory.makeEntity(this, this);
+		this.wrapped = factory.makeEntity(this);
 	}
 
 	public FWEntityFX(World world, Entity entity) {
@@ -111,11 +110,6 @@ public class FWEntityFX extends EntityFX implements EntityWrapper, RigidBody {
 	 * Entity Wrapper Methods
 	 * @return
 	 */
-	@Override
-	public boolean isValid() {
-		return !isDead;
-	}
-
 	@Override
 	public nova.core.world.World world() {
 		return new BWWorld(worldObj);

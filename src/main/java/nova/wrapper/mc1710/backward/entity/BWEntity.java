@@ -1,13 +1,15 @@
 package nova.wrapper.mc1710.backward.entity;
 
+import net.minecraftforge.common.DimensionManager;
 import nova.core.entity.Entity;
 import nova.core.util.transform.Vector3d;
 import nova.core.world.World;
 import nova.wrapper.mc1710.backward.world.BWWorld;
 
+import java.util.Arrays;
+
 /**
- * A Nova to Minecraft entity wrapper
- *
+ * A Minecraft to NOVA Entity wrapper
  * @author Calclavia
  */
 //TODO: Incomplete. All methods should be fully implemented.
@@ -35,14 +37,20 @@ public class BWEntity extends Entity {
 	}
 
 	@Override
-	public Entity setWorld(World world) {
-		//entity.setWorld(new FWWorld(world));
-		return this;
+	public void setWorld(World world) {
+		entity.travelToDimension(
+			Arrays
+				.stream(DimensionManager.getWorlds())
+				.filter(w -> w.getProviderName().equals(world.getID()))
+				.findAny()
+				.get()
+				.provider
+				.dimensionId
+		);
 	}
 
 	@Override
-	public Entity setPosition(Vector3d position) {
+	public void setPosition(Vector3d position) {
 		entity.setPosition(position.x, position.y, position.z);
-		return this;
 	}
 }
