@@ -12,7 +12,7 @@ import nova.core.gui.render.Graphics;
 import nova.core.util.transform.Vector2i;
 import nova.wrapper.mc1710.backward.gui.MCGui.MCContainer;
 import nova.wrapper.mc1710.backward.gui.MCGui.MCGuiScreen;
-import nova.wrapper.mc1710.backward.inventory.BWInventory;
+import nova.wrapper.mc1710.forward.inventory.FWInventory;
 
 import org.lwjgl.opengl.GL11;
 
@@ -41,7 +41,7 @@ public class MCGuiSlot extends MCGuiComponent<Slot> implements NativeSlot, Drawa
 
 	@Override
 	public void onAddedToContainer(MCContainer container) {
-		IInventory inventory = ((BWInventory) getComponent().getInventory()).mcInventory;
+		IInventory inventory = new FWInventory(getComponent().getInventory());
 		slot = new MCSlot(inventory, getComponent().getSlotID(), 0, 0);
 		container.addSlotToContainer(slot);
 	}
