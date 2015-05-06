@@ -43,7 +43,7 @@ public class FWInventory implements IInventory {
 
 	@Override
 	public void setInventorySlotContents(int slot, ItemStack stack) {
-		inventory.set(slot, ItemWrapperRegistry.instance.getNovaItem(stack));
+		inventory.set(slot, stack != null ? ItemWrapperRegistry.instance.getNovaItem(stack) : null);
 	}
 
 	@Override

@@ -44,7 +44,7 @@ public class MCGuiSlot extends MCGuiComponent<Slot> implements NativeSlot, Drawa
 	@Override
 	public void onAddedToContainer(MCContainer container) {
 		IInventory inventory = new FWInventory(getComponent().getInventory());
-		slot = new MCSlot(inventory, getComponent().getSlotID(), 0, 0);
+		slot = new MCSlot(inventory, getComponent().getSlotID(), 0, 0, getComponent());
 		container.addSlotToContainer(slot);
 	}
 
@@ -82,15 +82,21 @@ public class MCGuiSlot extends MCGuiComponent<Slot> implements NativeSlot, Drawa
 		RenderHelper.disableStandardItemLighting();
 	}
 
-	public class MCSlot extends net.minecraft.inventory.Slot {
+	public static class MCSlot extends net.minecraft.inventory.Slot {
 
 		private final int xCoord;
 		private final int yCoord;
+		private final Slot slot;
 
 		public MCSlot(IInventory inventory, int id, int xCoord, int yCoord) {
+			this(inventory, id, xCoord, yCoord, null);
+		}
+
+		public MCSlot(IInventory inventory, int id, int xCoord, int yCoord, Slot slot) {
 			super(inventory, id, 0, 0);
 			this.xCoord = xCoord;
 			this.yCoord = yCoord;
+			this.slot = slot;
 		}
 
 		public void setPosition(int x, int y, MCGuiScreen gui) {
@@ -105,16 +111,15 @@ public class MCGuiSlot extends MCGuiComponent<Slot> implements NativeSlot, Drawa
 
 		@Override
 		public boolean isItemValid(ItemStack stack) {
-			return !component.isReadOnly() && component.accept(ItemWrapperRegistry.instance.getNovaItem(stack));
+			return slot == null || !slot.isReadOnly() && slot.accept(ItemWrapperRegistry.instance.getNovaItem(stack));
 		}
 
 		@Override
 		public ItemStack decrStackSize(int size) {
-			if (component.isReadOnly()) {
-				return getStack();
-			} else {
+			if (slot == null || !slot.isReadOnly()) {
 				return super.decrStackSize(size);
 			}
+			return getStack();
 		}
 	}
 }
