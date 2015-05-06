@@ -1,3 +1,7 @@
+[![Build Status](https://img.shields.io/travis/NOVAAPI/NovaWrapper-MC.svg?style=flat-square)](https://travis-ci.org/NOVAAPI/NovaWrapper-MC)
+[![Coverage](https://img.shields.io/codecov/c/github/NOVAAPI/NovaWrapper-MC.svg?style=flat-square)](https://codecov.io/github/NOVAAPI/NovaWrapper-MC)
+[![Tests](https://img.shields.io/jenkins/t/http/jenkins.magik6k.net/NovaWrapper-MC1.7.10.svg?style=flat-square)](http://jenkins.magik6k.net/job/NovaWrapper-MC1.7.10/lastCompletedBuild/testReport/)
+
 Nova API
 ========
 NOVA is a voxel game modding framework designed to allow mods to be run across different voxel games.
