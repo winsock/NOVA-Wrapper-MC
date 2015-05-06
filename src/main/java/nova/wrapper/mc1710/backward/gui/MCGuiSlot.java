@@ -6,6 +6,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.inventory.IInventory;
+import net.minecraft.item.ItemStack;
 import nova.core.gui.components.inventory.Slot;
 import nova.core.gui.nativeimpl.NativeSlot;
 import nova.core.gui.render.Graphics;
@@ -13,6 +14,7 @@ import nova.core.util.transform.Vector2i;
 import nova.wrapper.mc1710.backward.gui.MCGui.MCContainer;
 import nova.wrapper.mc1710.backward.gui.MCGui.MCGuiScreen;
 import nova.wrapper.mc1710.forward.inventory.FWInventory;
+import nova.wrapper.mc1710.item.ItemWrapperRegistry;
 
 import org.lwjgl.opengl.GL11;
 
@@ -80,7 +82,7 @@ public class MCGuiSlot extends MCGuiComponent<Slot> implements NativeSlot, Drawa
 		RenderHelper.disableStandardItemLighting();
 	}
 
-	public static class MCSlot extends net.minecraft.inventory.Slot {
+	public class MCSlot extends net.minecraft.inventory.Slot {
 
 		private final int xCoord;
 		private final int yCoord;
@@ -99,6 +101,20 @@ public class MCGuiSlot extends MCGuiComponent<Slot> implements NativeSlot, Drawa
 		public void reset() {
 			this.xDisplayPosition = xCoord;
 			this.yDisplayPosition = yCoord;
+		}
+
+		@Override
+		public boolean isItemValid(ItemStack stack) {
+			return !component.isReadOnly() && component.accept(ItemWrapperRegistry.instance.getNovaItem(stack));
+		}
+
+		@Override
+		public ItemStack decrStackSize(int size) {
+			if (component.isReadOnly()) {
+				return getStack();
+			} else {
+				return super.decrStackSize(size);
+			}
 		}
 	}
 }
