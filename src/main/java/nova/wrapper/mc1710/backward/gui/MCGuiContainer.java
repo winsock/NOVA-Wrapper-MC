@@ -8,6 +8,7 @@ import nova.core.gui.GuiComponent;
 import nova.core.gui.Outline;
 import nova.core.gui.nativeimpl.NativeContainer;
 import nova.core.gui.render.Graphics;
+import nova.wrapper.mc1710.backward.gui.MCGui.MCContainer;
 
 public class MCGuiContainer extends MCGuiComponent<AbstractGuiContainer<?, ?>> implements NativeContainer {
 
@@ -25,6 +26,13 @@ public class MCGuiContainer extends MCGuiComponent<AbstractGuiContainer<?, ?>> i
 	@Override
 	public void removeElement(GuiComponent<?, ?> element) {
 		components.remove(element);
+	}
+
+	@Override
+	public void onAddedToContainer(MCContainer container) {
+		for (GuiComponent<?, ?> component : components) {
+			((DrawableGuiComponent) component.getNative()).onAddedToContainer(container);
+		}
 	}
 
 	@Override
