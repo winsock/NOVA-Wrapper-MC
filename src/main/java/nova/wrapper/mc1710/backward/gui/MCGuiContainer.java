@@ -7,6 +7,7 @@ import nova.core.gui.AbstractGuiContainer;
 import nova.core.gui.GuiComponent;
 import nova.core.gui.Outline;
 import nova.core.gui.nativeimpl.NativeContainer;
+import nova.core.gui.render.Canvas;
 import nova.core.gui.render.Graphics;
 import nova.wrapper.mc1710.backward.gui.MCGui.MCContainer;
 
@@ -35,14 +36,19 @@ public class MCGuiContainer extends MCGuiComponent<AbstractGuiContainer<?, ?>> i
 		}
 	}
 
+	// TODO This should be part of NovaCore -> Move to NativeContainer interface
 	@Override
 	public void draw(int mouseX, int mouseY, float partial, Graphics graphics) {
 		for (GuiComponent<?, ?> component : components) {
 			Outline outline = component.getOutline();
 			int width = outline.x1i(), height = outline.y1i();
-			graphics.getCanvas().translate(width, height);
+			Canvas canvas = graphics.getCanvas();
+
+			canvas.push();
+			canvas.setScissor(component.getOutline());
+			canvas.translate(width, height);
 			((DrawableGuiComponent) component.getNative()).draw(mouseX - width, mouseY - height, partial, graphics);
-			graphics.getCanvas().translate(-width, -height);
+			canvas.pop();
 		}
 		super.draw(mouseX, mouseY, partial, graphics);
 	}

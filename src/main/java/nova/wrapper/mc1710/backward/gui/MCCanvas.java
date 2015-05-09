@@ -13,18 +13,16 @@ import org.lwjgl.opengl.GL11;
 public class MCCanvas extends Canvas {
 
 	private final Tessellator tessellator;
+	private final float scale;
 
 	public MCCanvas(int width, int height, Tessellator tessellator) {
+		this(width, height, tessellator, 1F);
+	}
+
+	public MCCanvas(int width, int height, Tessellator tessellator, float scale) {
 		super(new Vector2i(width, height), false);
 		this.tessellator = tessellator;
-	}
-
-	public double tx() {
-		return state.tx;
-	}
-
-	public double ty() {
-		return state.ty;
+		this.scale = scale;
 	}
 
 	@Override
@@ -36,18 +34,18 @@ public class MCCanvas extends Canvas {
 	public void startDrawing(boolean textured) {
 		if (!textured)
 			GL11.glDisable(GL11.GL_TEXTURE_2D);
-		GL11.glColor4f(state.color.redf(), state.color.greenf(), state.color.bluef(), state.color.alphaf());
+		GL11.glColor4f(state.color().redf(), state.color().greenf(), state.color().bluef(), state.color().alphaf());
 		tessellator.startDrawing(GL11.GL_POLYGON);
 	}
 
 	@Override
 	public void addVertex(double x, double y) {
-		tessellator.addVertex(x, y, state.zIndex);
+		tessellator.addVertex(x, y, state.zIndex());
 	}
 
 	@Override
 	public void addVertexWithUV(double x, double y, double u, double v) {
-		tessellator.addVertexWithUV(x, y, state.zIndex, u, v);
+		tessellator.addVertexWithUV(x, y, state.zIndex(), u, v);
 	}
 
 	@Override
@@ -78,14 +76,43 @@ public class MCCanvas extends Canvas {
 	public void pop() {
 		super.pop();
 		GL11.glPopMatrix();
-		Spacing scissor = state.scissor;
-		GL11.glScissor(scissor.top(), scissor.right(), scissor.bottom(), scissor.left());
+
+		Spacing scissor = state.scissor();
+		glScissor(scissor.top(), scissor.right(), scissor.bottom(), scissor.left());
+		if (state.isScissor()) {
+			GL11.glEnable(GL11.GL_SCISSOR_TEST);
+		} else {
+			GL11.glDisable(GL11.GL_SCISSOR_TEST);
+		}
 	}
 
 	@Override
 	public void setScissor(int top, int right, int bottom, int left) {
-		GL11.glScissor(top, right, bottom, left);
+		glScissor(top, right, bottom, left);
 		super.setScissor(top, right, bottom, left);
+	}
+
+	@Override
+	public void addScissor(int top, int right, int bottom, int left) {
+		super.addScissor(top, right, bottom, left);
+		Spacing scissor = state.scissor();
+		glScissor(scissor.top(), scissor.right(), scissor.bottom(), scissor.left());
+	}
+
+	private void glScissor(int top, int right, int bottom, int left) {
+		System.out.println();
+		System.out.println(top + " " + right + " " + bottom + " " + left);
+		Minecraft mc = Minecraft.getMinecraft();
+
+		left = (int) Math.max(Math.ceil(left * scale), 0);
+		top = (int) Math.max(Math.ceil(top * scale), 0);
+		right = (int) Math.min(Math.ceil(mc.displayWidth / scale) * scale - Math.ceil(right * scale), mc.displayWidth);
+		bottom = (int) Math.min(Math.ceil(mc.displayHeight / scale) * scale - Math.ceil(bottom * scale), mc.displayHeight);
+
+		System.out.println(top + " " + right + " " + bottom + " " + left);
+
+		GL11.glScissor(left, mc.displayHeight - bottom - top, right + left, bottom);
+
 	}
 
 	@Override

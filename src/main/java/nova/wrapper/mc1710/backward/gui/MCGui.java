@@ -3,6 +3,7 @@ package nova.wrapper.mc1710.backward.gui;
 import java.util.Optional;
 
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.entity.player.EntityPlayer;
@@ -246,9 +247,10 @@ public class MCGui extends MCGuiContainer implements NativeGui, DrawableGuiCompo
 
 		@Override
 		public void setWorldAndResolution(Minecraft mc, int width, int height) {
+			ScaledResolution scaledresolution = new ScaledResolution(mc, mc.displayWidth, mc.displayHeight);
 
 			fontRendererObj = mc.fontRenderer;
-			MCCanvas canvas = new MCCanvas(width, height, Tessellator.instance);
+			MCCanvas canvas = new MCCanvas(width, height, Tessellator.instance, scaledresolution.getScaleFactor());
 			if (textRenderer == null)
 				textRenderer = new MCTextRenderer(fontRendererObj, canvas);
 

@@ -30,8 +30,8 @@ public class MCGuiPlayerInventory extends MCGuiComponent<PlayerInventory> implem
 	@Override
 	public void draw(int mouseX, int mouseY, float partial, Graphics graphics) {
 		MCCanvas canvas = getCanvas();
-		int x = (int) canvas.tx();
-		int y = (int) canvas.ty();
+		int x = canvas.getState().txi();
+		int y = canvas.getState().tyi();
 
 		MCGuiScreen gui = getGui().getGuiScreen();
 		for (MCSlot slot : slots) {

@@ -37,7 +37,7 @@ public class MCGuiSlot extends MCGuiComponent<Slot> implements NativeSlot, Drawa
 		MCCanvas canvas = getCanvas();
 		slot.reset();
 		drawSlot(gui, slot, mouseX, mouseY, !getComponent().getBackground().isPresent());
-		slot.setPosition((int) canvas.tx(), (int) canvas.ty(), gui);
+		slot.setPosition(canvas.getState().txi(), canvas.getState().tyi(), gui);
 		super.draw(mouseX, mouseY, partial, graphics);
 	}
 
