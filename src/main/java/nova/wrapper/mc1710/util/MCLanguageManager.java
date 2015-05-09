@@ -9,7 +9,7 @@ import nova.core.util.LanguageManager;
 public class MCLanguageManager extends LanguageManager {
 
 	@Override
-	public String getLocal(String key) {
+	public String translate(String key) {
 		return StatCollector.translateToLocal(key);
 	}
 }
