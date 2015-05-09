@@ -13,7 +13,6 @@ script:
 cache:
   directories:
   - ~/.gradle
-  - build/dirtyArtifacts
 
 notifications:
   irc:
