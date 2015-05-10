@@ -7,7 +7,6 @@ import nova.core.gui.Spacing;
 import nova.core.gui.render.Canvas;
 import nova.core.render.texture.Texture;
 import nova.core.util.transform.Vector2i;
-
 import org.lwjgl.opengl.GL11;
 
 public class MCCanvas extends Canvas {
@@ -100,8 +99,8 @@ public class MCCanvas extends Canvas {
 	}
 
 	private void glScissor(int top, int right, int bottom, int left) {
-		System.out.println();
-		System.out.println(top + " " + right + " " + bottom + " " + left);
+		//System.out.println();
+		//System.out.println(top + " " + right + " " + bottom + " " + left);
 		Minecraft mc = Minecraft.getMinecraft();
 
 		left = (int) Math.max(Math.ceil(left * scale), 0);
@@ -109,7 +108,7 @@ public class MCCanvas extends Canvas {
 		right = (int) Math.min(Math.ceil(mc.displayWidth / scale) * scale - Math.ceil(right * scale), mc.displayWidth);
 		bottom = (int) Math.min(Math.ceil(mc.displayHeight / scale) * scale - Math.ceil(bottom * scale), mc.displayHeight);
 
-		System.out.println(top + " " + right + " " + bottom + " " + left);
+		//System.out.println(top + " " + right + " " + bottom + " " + left);
 
 		GL11.glScissor(left, mc.displayHeight - bottom - top, right + left, bottom);
 
