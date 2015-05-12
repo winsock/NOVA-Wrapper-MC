@@ -77,11 +77,13 @@ public class NovaMinecraftPreloader extends DummyModContainer {
 		modClasses.forEach(mod -> {
 			ModMetadata fakeMeta = new ModMetadata();
 			NovaMod annotation = mod.getAnnotation(NovaMod.class);
-			fakeMeta.modId = annotation.id();
-			fakeMeta.name = annotation.name();
-			fakeMeta.version = annotation.version();
-			fakeMeta.description = annotation.name() + " is a NOVA mod.";
-			newMods.add(new DummyNovaMod(fakeMeta));
+			if (!annotation.isPlugin()) {
+				fakeMeta.modId = annotation.id();
+				fakeMeta.name = annotation.name();
+				fakeMeta.version = annotation.version();
+				fakeMeta.description = annotation.description();
+				newMods.add(new DummyNovaMod(fakeMeta));
+			}
 		});
 		ReflectionUtil.setPrivateObject(Loader.instance(), newMods, "mods");
 
@@ -95,7 +97,8 @@ public class NovaMinecraftPreloader extends DummyModContainer {
 	}
 
 	public void registerResourcePacks() {
-		Map<NovaMod, Class<?>> classesMap = modClasses.stream()
+		Map<NovaMod, Class<?>> classesMap = modClasses
+			.stream()
 			.filter(clazz -> clazz.getAnnotation(NovaMod.class) != null)
 			.collect(Collectors.toMap((clazz) -> clazz.getAnnotation(NovaMod.class), Function.identity()));
 
