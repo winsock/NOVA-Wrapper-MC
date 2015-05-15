@@ -27,6 +27,8 @@ import nova.core.block.components.ItemRenderer;
 import nova.core.block.components.LightEmitter;
 import nova.core.block.components.Stateful;
 import nova.core.block.components.StaticRenderer;
+import nova.core.event.EventManager;
+import nova.core.game.Game;
 import nova.core.render.texture.Texture;
 import nova.core.retention.Storable;
 import nova.core.util.Direction;
@@ -149,10 +151,16 @@ public class FWBlock extends net.minecraft.block.Block implements ISimpleBlockRe
 		return null;
 	}
 
-	//TODO: This method seems to only be invoked when a TileEntity changes, not when blocks change!
 	@Override
-	public void onNeighborChange(IBlockAccess access, int x, int y, int z, int tileX, int tileY, int tileZ) {
-		getBlockInstance(access, new Vector3i(x, y, z)).onNeighborChange(new Vector3i(tileX, tileY, tileZ));
+	public void onNeighborBlockChange(World access, int x, int y, int z, net.minecraft.block.Block otherBlock) {
+		//TODO: This method seems to only be invoked when a TileEntity changes, not when blocks change!
+		Block blockInstance = getBlockInstance(access, new Vector3i(x, y, z));
+		EventManager.BlockNeighborChangeEvent event = new EventManager.BlockNeighborChangeEvent(blockInstance.world(), blockInstance.position(), Optional.empty());
+		Game.instance.eventManager.blockNeighborChange.publish(event);
+		if (!event.isCanceled()) {
+			//TODO: This technically shouldn't be null!
+			blockInstance.onNeighborChange(null);
+		}
 	}
 
 	@Override
