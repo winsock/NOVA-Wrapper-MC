@@ -44,6 +44,7 @@ import nova.wrapper.mc1710.backward.world.BWWorld;
 import nova.wrapper.mc1710.forward.util.FWCuboid;
 import nova.wrapper.mc1710.item.ItemWrapperRegistry;
 import nova.wrapper.mc1710.render.RenderUtility;
+import nova.wrapper.mc1710.util.WrapperEventManager;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL12;
 
@@ -256,6 +257,30 @@ public class FWBlock extends net.minecraft.block.Block implements ISimpleBlockRe
 		} else {
 			return 0;
 		}
+	}
+
+	@Override
+	public boolean canConnectRedstone(IBlockAccess access, int x, int y, int z, int side) {
+		Block blockInstance = getBlockInstance(access, new Vector3i(x, y, z));
+		WrapperEventManager.RedstoneConnectEvent event = new WrapperEventManager.RedstoneConnectEvent(blockInstance.world(), blockInstance.position(), Direction.fromOrdinal(side));
+		WrapperEventManager.instance.onCanConnect.publish(event);
+		return event.canConnect;
+	}
+
+	@Override
+	public int isProvidingWeakPower(IBlockAccess access, int x, int y, int z, int side) {
+		Block blockInstance = getBlockInstance(access, new Vector3i(x, y, z));
+		WrapperEventManager.RedstoneEvent event = new WrapperEventManager.RedstoneEvent(blockInstance.world(), blockInstance.position(), Direction.fromOrdinal(side));
+		WrapperEventManager.instance.onWeakPower.publish(event);
+		return event.power;
+	}
+
+	@Override
+	public int isProvidingStrongPower(IBlockAccess access, int x, int y, int z, int side) {
+		Block blockInstance = getBlockInstance(access, new Vector3i(x, y, z));
+		WrapperEventManager.RedstoneEvent event = new WrapperEventManager.RedstoneEvent(blockInstance.world(), blockInstance.position(), Direction.fromOrdinal(side));
+		WrapperEventManager.instance.onStrongPower.publish(event);
+		return event.power;
 	}
 
 	/**

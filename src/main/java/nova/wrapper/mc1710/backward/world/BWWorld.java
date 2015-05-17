@@ -29,7 +29,6 @@ import java.util.Set;
  * The backwards world wrapper.
  * @author Calclavia
  */
-//TODO: Consider Blocks.air compatibility?
 public class BWWorld extends World {
 	public final net.minecraft.world.IBlockAccess access;
 
@@ -37,7 +36,7 @@ public class BWWorld extends World {
 		this.access = blockAccess;
 	}
 
-	private net.minecraft.world.World world() {
+	public net.minecraft.world.World world() {
 		// Trying to access world from a IBlockAccess object!
 		assert access instanceof World;
 		return (net.minecraft.world.World) access;
