@@ -1,9 +1,15 @@
 package nova.wrapper.mc1710.launcher;
 
-import java.io.File;
-import java.util.List;
-import java.util.Set;
-
+import cpw.mods.fml.common.FMLCommonHandler;
+import cpw.mods.fml.common.Mod;
+import cpw.mods.fml.common.SidedProxy;
+import cpw.mods.fml.common.event.FMLInitializationEvent;
+import cpw.mods.fml.common.event.FMLPostInitializationEvent;
+import cpw.mods.fml.common.event.FMLPreInitializationEvent;
+import cpw.mods.fml.common.event.FMLServerStartingEvent;
+import cpw.mods.fml.common.event.FMLServerStoppingEvent;
+import cpw.mods.fml.common.network.NetworkRegistry;
+import cpw.mods.fml.relauncher.FMLInjectionData;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Configuration;
 import nova.bootstrap.DependencyInjectionEntryPoint;
@@ -11,7 +17,9 @@ import nova.core.deps.DepDownloader;
 import nova.core.deps.MavenDependency;
 import nova.core.event.EventManager;
 import nova.core.game.Game;
-import nova.internal.NovaLauncher;
+import nova.core.loader.NativeLoader;
+import nova.internal.launch.ModLoader;
+import nova.internal.launch.NovaLauncher;
 import nova.wrapper.mc1710.NovaMinecraftPreloader;
 import nova.wrapper.mc1710.backward.gui.MCGuiFactory;
 import nova.wrapper.mc1710.depmodules.ClientModule;
@@ -27,16 +35,10 @@ import nova.wrapper.mc1710.item.OreDictionaryIntegration;
 import nova.wrapper.mc1710.manager.config.ConfigManager;
 import nova.wrapper.mc1710.nativewrapper.NativeConverters;
 import nova.wrapper.mc1710.recipes.MinecraftRecipeRegistry;
-import cpw.mods.fml.common.FMLCommonHandler;
-import cpw.mods.fml.common.Mod;
-import cpw.mods.fml.common.SidedProxy;
-import cpw.mods.fml.common.event.FMLInitializationEvent;
-import cpw.mods.fml.common.event.FMLPostInitializationEvent;
-import cpw.mods.fml.common.event.FMLPreInitializationEvent;
-import cpw.mods.fml.common.event.FMLServerStartingEvent;
-import cpw.mods.fml.common.event.FMLServerStoppingEvent;
-import cpw.mods.fml.common.network.NetworkRegistry;
-import cpw.mods.fml.relauncher.FMLInjectionData;
+
+import java.io.File;
+import java.util.List;
+import java.util.Set;
 
 /**
  * The main Nova Minecraft Wrapper loader, using Minecraft Forge.
@@ -48,12 +50,15 @@ public class NovaMinecraft {
 
 	public static final String id = "nova";
 	public static final String name = "NOVA";
+	public static final String mcId = "minecraft";
 
 	@SidedProxy(clientSide = "nova.wrapper.mc1710.launcher.ClientProxy", serverSide = "nova.wrapper.mc1710.launcher.CommonProxy")
 	public static CommonProxy proxy;
 	@Mod.Instance(id)
 	public static NovaMinecraft instance;
 	private static NovaLauncher launcher;
+
+	private static ModLoader<NativeLoader> nativeLoader;
 
 	@Mod.EventHandler
 	public void preInit(FMLPreInitializationEvent evt) {
@@ -87,6 +92,7 @@ public class NovaMinecraft {
 		NativeConverters.registerConverters(Game.instance.nativeManager);
 
 		launcher.generateDependencies();
+
 		try {
 			for (List<MavenDependency> dependencies : launcher.getNeededDeps().values()) {
 				for (MavenDependency dep : dependencies) {
@@ -96,6 +102,8 @@ public class NovaMinecraft {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+
+		launcher.load();
 
 		launcher.preInit();
 
