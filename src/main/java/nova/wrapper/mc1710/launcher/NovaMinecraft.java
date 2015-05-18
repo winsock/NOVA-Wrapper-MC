@@ -39,10 +39,10 @@ import nova.wrapper.mc1710.recipes.MinecraftRecipeRegistry;
 import java.io.File;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * The main Nova Minecraft Wrapper loader, using Minecraft Forge.
- *
  * @author Calclavia
  */
 @Mod(modid = NovaMinecraft.id, name = NovaMinecraft.name, version = NovaMinecraftPreloader.version)
@@ -105,6 +105,28 @@ public class NovaMinecraft {
 
 		launcher.load();
 
+		/**
+		 * Instantiate native loaders
+		 */
+		nativeLoader = new ModLoader<>(NativeLoader.class, diep,
+			evt.getAsmData()
+				.getAll(NativeLoader.class.getName())
+				.stream()
+				.map(d -> d.getClassName())
+				.map(c -> {
+					try {
+						return Class.forName(c);
+					} catch (ClassNotFoundException e) {
+						throw new ExceptionInInitializerError(e);
+					}
+				})
+				.filter(c -> mcId.equals(c.getAnnotation(NativeLoader.class).forGame()))
+				.collect(Collectors.toSet())
+		);
+
+		nativeLoader.load();
+
+		nativeLoader.preInit();
 		launcher.preInit();
 
 		// Initiate config system
@@ -128,12 +150,14 @@ public class NovaMinecraft {
 	@Mod.EventHandler
 	public void init(FMLInitializationEvent evt) {
 		proxy.init();
+		nativeLoader.init();
 		launcher.init();
 	}
 
 	@Mod.EventHandler
 	public void postInit(FMLPostInitializationEvent evt) {
 		proxy.postInit();
+		nativeLoader.postInit();
 		launcher.postInit();
 	}
 

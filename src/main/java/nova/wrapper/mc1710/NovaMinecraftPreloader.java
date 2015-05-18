@@ -32,6 +32,7 @@ import java.util.stream.Collectors;
 public class NovaMinecraftPreloader extends DummyModContainer {
 	public static final String version = "0.0.1";
 	private static final ModMetadata md;
+	public static Set<Class<?>> modClasses;
 
 	static {
 		md = new ModMetadata();
@@ -39,8 +40,6 @@ public class NovaMinecraftPreloader extends DummyModContainer {
 		md.name = "NOVA Preloader";
 		md.version = version;
 	}
-
-	public static Set<Class<?>> modClasses;
 
 	public NovaMinecraftPreloader() {
 		super(md);
