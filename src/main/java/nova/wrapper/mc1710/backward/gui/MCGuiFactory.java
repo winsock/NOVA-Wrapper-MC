@@ -13,6 +13,7 @@ import net.minecraft.world.World;
 import nova.core.entity.Entity;
 import nova.core.gui.Gui;
 import nova.core.gui.factory.GuiFactory;
+import nova.core.gui.factory.GuiManager;
 import nova.core.util.exception.NovaException;
 import nova.core.util.transform.Vector3i;
 import nova.wrapper.mc1710.backward.entity.BWEntityPlayer;
@@ -21,21 +22,31 @@ import nova.wrapper.mc1710.backward.gui.MCGui.MCGuiScreen;
 import nova.wrapper.mc1710.launcher.NovaMinecraft;
 import cpw.mods.fml.common.network.IGuiHandler;
 
-public class MCGuiFactory extends GuiFactory {
+public class MCGuiFactory extends GuiManager {
 
 	private static Optional<Gui> guiToOpen = Optional.empty();
-	private static List<Gui> idMappedGUIs = new ArrayList<>();
+	private static List<GuiFactory> idMappedFactories = new ArrayList<>();
 
 	@Override
-	public void registerGui(Gui gui, String modID) {
-		super.registerGui(gui, modID);
-		idMappedGUIs.add(gui);
+	public GuiFactory register(GuiFactory factory) {
+		idMappedFactories.add(factory);
+		return super.register(factory);
+	}
+
+	@Override
+	public void showGui(String identifier, Entity entity, Vector3i pos) {
+		GuiFactory factory = getFactory(identifier).orElseThrow(() -> new NovaException(String.format("No GUI called %s registered!", identifier)));
+		Gui gui = factory.makeGUI();
+		showGui(gui, entity, pos, idMappedFactories.indexOf(factory));
 	}
 
 	@Override
 	protected void showGui(Gui gui, Entity entity, Vector3i pos) {
+		showGui(gui, entity, pos, -1);
+	}
+
+	private void showGui(Gui gui, Entity entity, Vector3i pos, int id) {
 		BWEntityPlayer player = (BWEntityPlayer) entity;
-		int id = idMappedGUIs.indexOf(gui);
 		guiToOpen = Optional.of(gui);
 		if (player.entity.worldObj.isRemote != gui.hasServerSide()) {
 			player.entity.openGui(NovaMinecraft.id, id, player.entity.getEntityWorld(), pos.x, pos.y, pos.z);
@@ -93,7 +104,7 @@ public class MCGuiFactory extends GuiFactory {
 				guiToOpen = Optional.empty();
 			} else {
 				// Try to get the client side GUI from the id mapping
-				gui = idMappedGUIs.get(id);
+				gui = idMappedFactories.get(id).makeGUI();
 			}
 			if (gui == null)
 				throw new NovaException("Couldn't get client side instance for the provided GUI of id " + id + " !");
