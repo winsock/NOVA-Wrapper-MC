@@ -1,9 +1,6 @@
 package nova.wrapper.mc1710.backward.gui;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-
+import cpw.mods.fml.common.network.IGuiHandler;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.inventory.GuiContainer;
@@ -15,12 +12,15 @@ import nova.core.gui.Gui;
 import nova.core.gui.factory.GuiFactory;
 import nova.core.gui.factory.GuiManager;
 import nova.core.util.exception.NovaException;
-import nova.core.util.transform.Vector3i;
+import nova.core.util.transform.vector.Vector3i;
 import nova.wrapper.mc1710.backward.entity.BWEntityPlayer;
 import nova.wrapper.mc1710.backward.gui.MCGui.MCContainer;
 import nova.wrapper.mc1710.backward.gui.MCGui.MCGuiScreen;
 import nova.wrapper.mc1710.launcher.NovaMinecraft;
-import cpw.mods.fml.common.network.IGuiHandler;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
 public class MCGuiFactory extends GuiManager {
 

@@ -1,8 +1,8 @@
 package nova.wrapper.mc1710.forward.block;
 
 import nova.core.block.BlockWrapper;
-import nova.core.util.transform.Vector3d;
-import nova.core.util.transform.Vector3i;
+import nova.core.util.transform.vector.Vector3d;
+import nova.core.util.transform.vector.Vector3i;
 import nova.core.world.World;
 
 /**

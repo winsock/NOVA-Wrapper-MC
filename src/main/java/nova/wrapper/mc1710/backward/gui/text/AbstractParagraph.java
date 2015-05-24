@@ -1,11 +1,11 @@
 package nova.wrapper.mc1710.backward.gui.text;
 
+import nova.core.gui.render.text.TextRenderer.RenderedText;
+import nova.core.util.transform.vector.Vector2d;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
-
-import nova.core.gui.render.text.TextRenderer.RenderedText;
-import nova.core.util.transform.Vector2d;
 
 abstract class AbstractParagraph<T extends IText> implements IText, RenderedText {
 

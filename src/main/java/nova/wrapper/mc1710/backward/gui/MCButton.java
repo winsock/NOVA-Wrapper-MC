@@ -1,7 +1,9 @@
 package nova.wrapper.mc1710.backward.gui;
 
-import java.util.Optional;
-
+import cpw.mods.fml.client.config.GuiButtonExt;
+import cpw.mods.fml.common.FMLCommonHandler;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import nova.core.gui.GuiEvent.MouseEvent;
@@ -10,14 +12,10 @@ import nova.core.gui.Outline;
 import nova.core.gui.components.Button;
 import nova.core.gui.nativeimpl.NativeButton;
 import nova.core.gui.render.Graphics;
-import nova.core.util.transform.Vector2i;
-
+import nova.core.util.transform.vector.Vector2i;
 import org.lwjgl.opengl.GL11;
 
-import cpw.mods.fml.client.config.GuiButtonExt;
-import cpw.mods.fml.common.FMLCommonHandler;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
+import java.util.Optional;
 
 public class MCButton extends MCGuiComponent<Button> implements NativeButton, DrawableGuiComponent {
 
@@ -49,16 +47,16 @@ public class MCButton extends MCGuiComponent<Button> implements NativeButton, Dr
 	}
 
 	@Override
-	public Optional<Vector2i> getMinimumSize() {
-		FontRenderer fontRenderer = Minecraft.getMinecraft().fontRenderer;
-		return fontRenderer != null ? Optional.of(new Vector2i(fontRenderer.getStringWidth(button.displayString) + 10, fontRenderer.FONT_HEIGHT + 10)) : Optional.empty();
-	}
-
-	@Override
 	public void setText(String text) {
 		if (FMLCommonHandler.instance().getSide().isClient()) {
 			button.displayString = text;
 		}
+	}
+
+	@Override
+	public Optional<Vector2i> getMinimumSize() {
+		FontRenderer fontRenderer = Minecraft.getMinecraft().fontRenderer;
+		return fontRenderer != null ? Optional.of(new Vector2i(fontRenderer.getStringWidth(button.displayString) + 10, fontRenderer.FONT_HEIGHT + 10)) : Optional.empty();
 	}
 
 	@Override

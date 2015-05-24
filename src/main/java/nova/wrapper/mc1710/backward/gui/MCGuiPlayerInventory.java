@@ -1,18 +1,18 @@
 package nova.wrapper.mc1710.backward.gui;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-
 import net.minecraft.inventory.IInventory;
 import nova.core.gui.components.inventory.PlayerInventory;
 import nova.core.gui.nativeimpl.NativePlayerInventory;
 import nova.core.gui.render.Graphics;
-import nova.core.util.transform.Vector2i;
+import nova.core.util.transform.vector.Vector2i;
 import nova.wrapper.mc1710.backward.gui.MCGui.MCContainer;
 import nova.wrapper.mc1710.backward.gui.MCGui.MCGuiScreen;
 import nova.wrapper.mc1710.backward.gui.MCGuiSlot.MCSlot;
 import nova.wrapper.mc1710.backward.inventory.BWInventory;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
 public class MCGuiPlayerInventory extends MCGuiComponent<PlayerInventory> implements NativePlayerInventory {
 

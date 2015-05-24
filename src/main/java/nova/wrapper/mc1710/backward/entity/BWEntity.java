@@ -2,7 +2,7 @@ package nova.wrapper.mc1710.backward.entity;
 
 import net.minecraftforge.common.DimensionManager;
 import nova.core.entity.Entity;
-import nova.core.util.transform.Vector3d;
+import nova.core.util.transform.vector.Vector3d;
 import nova.core.world.World;
 import nova.wrapper.mc1710.backward.world.BWWorld;
 

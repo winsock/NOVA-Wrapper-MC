@@ -3,7 +3,7 @@ package nova.wrapper.mc1710.util;
 import nova.core.event.EventBus;
 import nova.core.event.EventManager;
 import nova.core.util.Direction;
-import nova.core.util.transform.Vector3i;
+import nova.core.util.transform.vector.Vector3i;
 import nova.core.world.World;
 
 /**

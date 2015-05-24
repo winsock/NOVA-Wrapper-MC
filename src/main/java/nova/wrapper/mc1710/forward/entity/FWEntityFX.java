@@ -10,9 +10,9 @@ import nova.core.entity.Entity;
 import nova.core.entity.EntityFactory;
 import nova.core.entity.EntityWrapper;
 import nova.core.util.components.Updater;
-import nova.core.util.transform.MatrixStack;
 import nova.core.util.transform.Quaternion;
-import nova.core.util.transform.Vector3d;
+import nova.core.util.transform.matrix.MatrixStack;
+import nova.core.util.transform.vector.Vector3d;
 import nova.wrapper.mc1710.backward.render.BWModel;
 import nova.wrapper.mc1710.backward.world.BWWorld;
 

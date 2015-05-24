@@ -5,7 +5,7 @@ import net.minecraft.client.renderer.entity.Render;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.ResourceLocation;
 import nova.core.block.components.DynamicRenderer;
-import nova.core.util.transform.MatrixStack;
+import nova.core.util.transform.matrix.MatrixStack;
 import nova.wrapper.mc1710.backward.render.BWModel;
 
 import java.util.Optional;

@@ -1,11 +1,11 @@
 package nova.wrapper.mc1710.backward.gui.text;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import net.minecraft.client.gui.FontRenderer;
 import nova.core.gui.render.text.FormattedText.TextFormat;
-import nova.core.util.transform.Vector2d;
+import nova.core.util.transform.vector.Vector2d;
+
+import java.util.ArrayList;
+import java.util.List;
 
 interface IText {
 
@@ -13,8 +13,8 @@ interface IText {
 
 	static class Text implements IText {
 
-		String text;
 		final TextFormat format;
+		String text;
 		Vector2d dimensions;
 
 		Text(String text, TextFormat format, FontRenderer fontrenderer) {

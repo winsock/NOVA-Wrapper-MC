@@ -1,7 +1,8 @@
 package nova.wrapper.mc1710.backward.gui;
 
-import java.util.Optional;
-
+import cpw.mods.fml.common.FMLCommonHandler;
+import cpw.mods.fml.relauncher.Side;
+import cpw.mods.fml.relauncher.SideOnly;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.gui.inventory.GuiContainer;
@@ -20,17 +21,14 @@ import nova.core.gui.render.Canvas;
 import nova.core.gui.render.Graphics;
 import nova.core.gui.render.text.TextMetrics;
 import nova.core.network.Packet;
-import nova.core.util.transform.Vector2i;
+import nova.core.util.transform.vector.Vector2i;
 import nova.wrapper.mc1710.backward.gui.text.MCTextRenderer;
 import nova.wrapper.mc1710.network.discriminator.PacketGui;
 import nova.wrapper.mc1710.network.netty.MCNetworkManager;
-
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.GL11;
 
-import cpw.mods.fml.common.FMLCommonHandler;
-import cpw.mods.fml.relauncher.Side;
-import cpw.mods.fml.relauncher.SideOnly;
+import java.util.Optional;
 
 /**
  * Minecraft implementation of the NOVA GUI System
@@ -39,12 +37,16 @@ import cpw.mods.fml.relauncher.SideOnly;
  */
 public class MCGui extends MCGuiContainer implements NativeGui, DrawableGuiComponent {
 
+	private static final Container fakeContainer = new Container() {
+		@Override
+		public boolean canInteractWith(EntityPlayer player) {
+			return false;
+		}
+	};
 	private final Gui component;
-
 	private Outline outline = Outline.empty;
 	private Graphics graphics;
 	private MCTextRenderer textRenderer;
-
 	@SideOnly(Side.CLIENT)
 	private MCGuiScreen guiScreen;
 	private MCContainer container;
@@ -160,13 +162,6 @@ public class MCGui extends MCGuiContainer implements NativeGui, DrawableGuiCompo
 			return null;
 		}
 	}
-
-	private static final Container fakeContainer = new Container() {
-		@Override
-		public boolean canInteractWith(EntityPlayer player) {
-			return false;
-		}
-	};
 
 	@SideOnly(Side.CLIENT)
 	public class MCGuiScreen extends GuiContainer {

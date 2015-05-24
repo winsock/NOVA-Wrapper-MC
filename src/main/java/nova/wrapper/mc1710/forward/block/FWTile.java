@@ -10,7 +10,7 @@ import nova.core.game.Game;
 import nova.core.retention.Data;
 import nova.core.retention.Storable;
 import nova.core.util.components.Updater;
-import nova.core.util.transform.Vector3i;
+import nova.core.util.transform.vector.Vector3i;
 import nova.wrapper.mc1710.backward.world.BWWorld;
 import nova.wrapper.mc1710.network.netty.MCNetworkManager;
 import nova.wrapper.mc1710.util.DataUtility;

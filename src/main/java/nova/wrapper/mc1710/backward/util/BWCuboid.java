@@ -1,8 +1,8 @@
 package nova.wrapper.mc1710.backward.util;
 
 import net.minecraft.util.AxisAlignedBB;
-import nova.core.util.transform.Cuboid;
-import nova.core.util.transform.Vector3d;
+import nova.core.util.transform.shape.Cuboid;
+import nova.core.util.transform.vector.Vector3d;
 
 /**
  * @author Calclavia

@@ -6,7 +6,7 @@ import net.minecraft.util.DamageSource;
 import nova.core.entity.components.Damageable;
 import nova.core.player.InventoryPlayer;
 import nova.core.player.Player;
-import nova.core.util.transform.Vector3d;
+import nova.core.util.transform.vector.Vector3d;
 import nova.wrapper.mc1710.backward.inventory.BWInventory;
 
 /**

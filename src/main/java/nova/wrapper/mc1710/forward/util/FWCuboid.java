@@ -1,7 +1,7 @@
 package nova.wrapper.mc1710.forward.util;
 
 import net.minecraft.util.AxisAlignedBB;
-import nova.core.util.transform.Cuboid;
+import nova.core.util.transform.shape.Cuboid;
 
 /**
  * @author Calclavia

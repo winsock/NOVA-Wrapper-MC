@@ -2,7 +2,7 @@ package nova.wrapper.mc1710.forward.entity;
 
 import nova.core.entity.RigidBody;
 import nova.core.util.transform.Quaternion;
-import nova.core.util.transform.Vector3d;
+import nova.core.util.transform.vector.Vector3d;
 
 /**
  * Based on the Euler Integration because Minecraft stores the following values:

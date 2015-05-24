@@ -6,7 +6,7 @@ import net.minecraft.util.ResourceLocation;
 import nova.core.gui.Spacing;
 import nova.core.gui.render.Canvas;
 import nova.core.render.texture.Texture;
-import nova.core.util.transform.Vector2i;
+import nova.core.util.transform.vector.Vector2i;
 import org.lwjgl.opengl.GL11;
 
 public class MCCanvas extends Canvas {

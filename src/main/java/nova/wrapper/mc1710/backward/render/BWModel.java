@@ -9,7 +9,7 @@ import net.minecraft.world.IBlockAccess;
 import nova.core.render.model.Model;
 import nova.core.render.texture.EntityTexture;
 import nova.core.render.texture.Texture;
-import nova.core.util.transform.Vector3i;
+import nova.core.util.transform.vector.Vector3i;
 import nova.wrapper.mc1710.render.RenderUtility;
 
 import java.util.Optional;

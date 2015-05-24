@@ -10,7 +10,7 @@ import nova.core.retention.Data;
 import nova.core.retention.Storable;
 import nova.core.util.components.Updater;
 import nova.core.util.transform.Quaternion;
-import nova.core.util.transform.Vector3d;
+import nova.core.util.transform.vector.Vector3d;
 import nova.wrapper.mc1710.backward.world.BWWorld;
 import nova.wrapper.mc1710.util.DataUtility;
 

@@ -1,17 +1,16 @@
 package nova.wrapper.mc1710.backward.gui.text;
 
-import java.util.List;
-
 import net.minecraft.client.gui.FontRenderer;
 import nova.core.gui.render.text.FormattedText;
 import nova.core.gui.render.text.TextRenderer;
 import nova.core.render.Color;
 import nova.core.util.math.MathUtil;
-import nova.core.util.transform.Vector2d;
+import nova.core.util.transform.vector.Vector2d;
 import nova.wrapper.mc1710.backward.gui.MCCanvas;
 import nova.wrapper.mc1710.backward.gui.text.IText.Text;
-
 import org.lwjgl.opengl.GL11;
+
+import java.util.List;
 
 public class MCTextRenderer implements TextRenderer {
 
