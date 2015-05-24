@@ -1,10 +1,10 @@
 package nova.wrapper.mc1710.forward.entity;
 
 import nova.core.entity.Entity;
-import nova.core.entity.RigidBody;
-import nova.core.util.component.ComponentProvider;
+import nova.core.entity.component.RigidBody;
 import nova.core.util.transform.matrix.Quaternion;
 import nova.core.util.transform.vector.Vector3d;
+import nova.core.world.component.ComponentProvider;
 
 /**
  * Based on the Euler Integration because Minecraft stores the following values:
@@ -14,8 +14,8 @@ import nova.core.util.transform.vector.Vector3d;
  * @author Calclavia
  */
 public class MCRigidBody extends RigidBody {
-	private final Entity entity;
-	private final net.minecraft.entity.Entity mcEntity;
+	private Entity entity;
+	private net.minecraft.entity.Entity mcEntity;
 
 	/**
 	 * Translation
@@ -29,8 +29,11 @@ public class MCRigidBody extends RigidBody {
 
 	public MCRigidBody(ComponentProvider provider) {
 		super(provider);
-		entity = (nova.core.entity.Entity) provider;
-		mcEntity = (net.minecraft.entity.Entity) entity.wrapper;
+		//TODO: This nullable provider is horrible. Change this.
+		if (provider != null) {
+			entity = (nova.core.entity.Entity) provider;
+			mcEntity = (net.minecraft.entity.Entity) entity.wrapper;
+		}
 	}
 
 	@Override

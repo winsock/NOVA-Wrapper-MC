@@ -18,6 +18,7 @@ import nova.core.deps.MavenDependency;
 import nova.core.event.EventManager;
 import nova.core.game.Game;
 import nova.core.loader.NativeLoader;
+import nova.core.world.component.ComponentProvider;
 import nova.internal.launch.ModLoader;
 import nova.internal.launch.NovaLauncher;
 import nova.wrapper.mc1710.NovaMinecraftPreloader;
@@ -30,6 +31,8 @@ import nova.wrapper.mc1710.depmodules.NetworkModule;
 import nova.wrapper.mc1710.depmodules.SaveModule;
 import nova.wrapper.mc1710.depmodules.TickerModule;
 import nova.wrapper.mc1710.forward.block.BlockWrapperRegistry;
+import nova.wrapper.mc1710.forward.entity.MCRigidBody;
+import nova.wrapper.mc1710.forward.entity.MCTransform3d;
 import nova.wrapper.mc1710.item.ItemWrapperRegistry;
 import nova.wrapper.mc1710.item.OreDictionaryIntegration;
 import nova.wrapper.mc1710.manager.config.ConfigManager;
@@ -83,13 +86,19 @@ public class NovaMinecraft {
 		Game.instance = diep.init();
 
 		/**
-		 * Set network manager parameters
+		 * Set manager parameters
 		 */
 		BlockWrapperRegistry.instance.registerBlocks();
 		ItemWrapperRegistry.instance.registerItems();
 		OreDictionaryIntegration.instance.registerOreDictionary();
 		MinecraftRecipeRegistry.instance.registerRecipes();
 		NativeConverters.registerConverters(Game.instance.nativeManager);
+
+		/**
+		 * Set up components
+		 */
+		Game.instance.componentManager.register(args -> args.length > 0 ? new MCRigidBody((ComponentProvider) args[0]) : new MCRigidBody(null));
+		Game.instance.componentManager.register(args -> args.length > 0 ? new MCTransform3d((ComponentProvider) args[0]) : new MCTransform3d(null));
 
 		launcher.generateDependencies();
 

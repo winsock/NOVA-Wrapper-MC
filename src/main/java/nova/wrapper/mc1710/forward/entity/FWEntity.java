@@ -8,9 +8,9 @@ import nova.core.entity.EntityFactory;
 import nova.core.entity.EntityWrapper;
 import nova.core.retention.Data;
 import nova.core.retention.Storable;
-import nova.core.util.component.Updater;
 import nova.core.util.transform.Transform3d;
 import nova.core.util.transform.vector.Vector3d;
+import nova.core.world.component.Updater;
 import nova.wrapper.mc1710.backward.world.BWWorld;
 import nova.wrapper.mc1710.util.DataUtility;
 

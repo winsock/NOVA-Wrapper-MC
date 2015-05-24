@@ -3,7 +3,7 @@ package nova.wrapper.mc1710.backward.entity;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.util.DamageSource;
-import nova.core.entity.components.Damageable;
+import nova.core.entity.component.Damageable;
 import nova.core.player.InventoryPlayer;
 import nova.core.player.Player;
 import nova.core.util.transform.vector.Vector3d;

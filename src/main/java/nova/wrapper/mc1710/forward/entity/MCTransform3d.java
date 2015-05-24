@@ -1,20 +1,23 @@
 package nova.wrapper.mc1710.forward.entity;
 
-import nova.core.util.component.ComponentProvider;
 import nova.core.util.transform.Transform3d;
 import nova.core.util.transform.matrix.Quaternion;
 import nova.core.util.transform.vector.Vector3d;
+import nova.core.world.component.ComponentProvider;
 
 /**
  * Wraps Transform3d used in entity
  * @author Calclavia
  */
 public class MCTransform3d extends Transform3d {
-	private final net.minecraft.entity.Entity mcEntity;
+	private net.minecraft.entity.Entity mcEntity;
 
 	public MCTransform3d(ComponentProvider provider) {
 		super(provider);
-		mcEntity = (net.minecraft.entity.Entity) ((nova.core.entity.Entity) provider).wrapper;
+		//TODO: This nullable provider is horrible. Change this.
+		if (provider != null) {
+			mcEntity = (net.minecraft.entity.Entity) ((nova.core.entity.Entity) provider).wrapper;
+		}
 	}
 
 	@Override

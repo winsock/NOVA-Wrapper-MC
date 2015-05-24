@@ -10,10 +10,10 @@ import nova.core.block.components.DynamicRenderer;
 import nova.core.entity.Entity;
 import nova.core.entity.EntityFactory;
 import nova.core.entity.EntityWrapper;
-import nova.core.util.component.Updater;
 import nova.core.util.transform.Transform3d;
 import nova.core.util.transform.matrix.MatrixStack;
 import nova.core.util.transform.vector.Vector3d;
+import nova.core.world.component.Updater;
 import nova.wrapper.mc1710.backward.render.BWModel;
 import nova.wrapper.mc1710.backward.world.BWWorld;
 
