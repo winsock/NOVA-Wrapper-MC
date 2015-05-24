@@ -1,7 +1,7 @@
 package nova.wrapper.mc1710.forward.entity;
 
 import nova.core.entity.RigidBody;
-import nova.core.util.transform.Quaternion;
+import nova.core.util.transform.matrix.Quaternion;
 import nova.core.util.transform.vector.Vector3d;
 
 /**
