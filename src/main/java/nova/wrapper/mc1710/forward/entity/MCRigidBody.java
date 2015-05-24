@@ -1,6 +1,8 @@
 package nova.wrapper.mc1710.forward.entity;
 
+import nova.core.entity.Entity;
 import nova.core.entity.RigidBody;
+import nova.core.util.component.ComponentProvider;
 import nova.core.util.transform.matrix.Quaternion;
 import nova.core.util.transform.vector.Vector3d;
 
@@ -9,40 +11,29 @@ import nova.core.util.transform.vector.Vector3d;
  *
  * Position
  * Velocity
- *
  * @author Calclavia
  */
-public class MCRigidBody implements RigidBody {
-	private final net.minecraft.entity.Entity entity;
-
-	private double mass = 1;
+public class MCRigidBody extends RigidBody {
+	private final Entity entity;
+	private final net.minecraft.entity.Entity mcEntity;
 
 	/**
 	 * Translation
 	 */
-	private double drag = 0;
-
-	private Vector3d gravity = new Vector3d(0, -9.81, 0);
-
 	private Vector3d netForce = Vector3d.zero;
 
 	/**
 	 * Rotation
 	 */
-	private double angularDrag = 0;
-
-	private Quaternion angularVelocity = Quaternion.identity;
-
 	private Vector3d netTorque = Vector3d.zero;
 
-	private float inertia = 1;
-
-	private Vector3d center = Vector3d.zero;
-
-	public MCRigidBody(net.minecraft.entity.Entity entity) {
-		this.entity = entity;
+	public MCRigidBody(ComponentProvider provider) {
+		super(provider);
+		entity = (nova.core.entity.Entity) provider;
+		mcEntity = (net.minecraft.entity.Entity) entity.wrapper;
 	}
 
+	@Override
 	public void update(double deltaTime) {
 		updateTranslation(deltaTime);
 		updateRotation(deltaTime);
@@ -51,18 +42,18 @@ public class MCRigidBody implements RigidBody {
 	void updateTranslation(double deltaTime) {
 		//Integrate velocity to displacement
 		Vector3d displacement = velocity().multiply(deltaTime);
-		entity.moveEntity(displacement.x, displacement.y, displacement.z);
+		mcEntity.moveEntity(displacement.x, displacement.y, displacement.z);
 
 		//Integrate netForce to velocity
-		setVelocity(velocity().add(netForce.divide(mass).multiply(deltaTime)));
+		setVelocity(velocity().add(netForce.divide(mass()).multiply(deltaTime)));
 
 		//Clear net force
 		netForce = Vector3d.zero;
 
 		//Apply drag
-		addForce(velocity().negate().multiply(drag));
+		addForce(velocity().negate().multiply(drag()));
 		//Apply gravity
-		addForce(gravity.multiply(mass));
+		addForce(gravity().multiply(mass()));
 	}
 
 	void updateRotation(double deltaTime) {
@@ -70,7 +61,7 @@ public class MCRigidBody implements RigidBody {
 		//Integrate angular velocity to angular displacement
 		Quaternion angularVel = angularVelocity();
 		Quaternion deltaRotation = angularVel.scale(deltaTime);
-		setRotation(rotation().rightMultiply(deltaRotation));
+		entity.transform.setRotation(entity.transform.rotation().rightMultiply(deltaRotation));
 
 		//Integrate torque to angular velocity
 		setAngularVelocity(angularVelocity().rightMultiply(Quaternion.fromEuler(netTorque.multiply(deltaTime))));
@@ -79,94 +70,20 @@ public class MCRigidBody implements RigidBody {
 		netTorque = Vector3d.zero;
 
 		//Apply drag
-		Vector3d eulerAngularVel = angularVelocity.toEuler();
-		addTorque(eulerAngularVel.negate().multiply(angularDrag));
+		Vector3d eulerAngularVel = angularVelocity().toEuler();
+		addTorque(eulerAngularVel.negate().multiply(angularDrag()));
 	}
 
 	@Override
-	public double mass() {
-		return mass;
-	}
-
-	@Override
-	public void setMass(double mass) {
-		this.mass = mass;
-	}
-
-	public Vector3d position() {
-		return new Vector3d(entity.posX, entity.posY, entity.posZ);
-	}
-
-	@Override
-	public Vector3d velocity() {
-		return new Vector3d(entity.motionX, entity.motionY, entity.motionZ);
+	public Vector3d getVelocity() {
+		return new Vector3d(mcEntity.motionX, mcEntity.motionY, mcEntity.motionZ);
 	}
 
 	@Override
 	public void setVelocity(Vector3d velocity) {
-		entity.motionX = velocity.x;
-		entity.motionY = velocity.y;
-		entity.motionZ = velocity.z;
-	}
-
-	@Override
-	public double drag() {
-		return drag;
-	}
-
-	@Override
-	public void setDrag(double drag) {
-		this.drag = drag;
-	}
-
-	@Override
-	public Vector3d gravity() {
-		return gravity;
-	}
-
-	@Override
-	public void setGravity(Vector3d gravity) {
-		this.gravity = gravity;
-	}
-
-	@Override
-	public double angularDrag() {
-		return angularDrag;
-	}
-
-	@Override
-	public void setAngularDrag(double angularDrag) {
-		this.angularDrag = angularDrag;
-	}
-
-	public Quaternion rotation() {
-		return Quaternion.fromEuler(entity.rotationYaw, entity.rotationPitch, 0);
-	}
-
-	public void setRotation(Quaternion rotation) {
-		Vector3d euler = rotation.toEuler();
-		entity.rotationYaw = euler.xf();
-		entity.rotationPitch = euler.yf();
-	}
-
-	@Override
-	public Quaternion angularVelocity() {
-		return angularVelocity;
-	}
-
-	@Override
-	public void setAngularVelocity(Quaternion angularVelocity) {
-		this.angularVelocity = angularVelocity;
-	}
-
-	@Override
-	public Vector3d center() {
-		return center;
-	}
-
-	@Override
-	public void setCenter(Vector3d center) {
-		this.center = center;
+		mcEntity.motionX = velocity.x;
+		mcEntity.motionY = velocity.y;
+		mcEntity.motionZ = velocity.z;
 	}
 
 	@Override
@@ -181,6 +98,6 @@ public class MCRigidBody implements RigidBody {
 
 	@Override
 	public void addForce(Vector3d force) {
-		netForce = netForce.add(force.divide(mass));
+		netForce = netForce.add(force.divide(mass()));
 	}
 }

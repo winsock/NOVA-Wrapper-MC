@@ -29,7 +29,7 @@ public class FWEntityRenderer extends Render {
 	private void render(Entity wrapper, nova.core.entity.Entity entity, double x, double y, double z) {
 		if (entity instanceof DynamicRenderer) {
 			BWModel model = new BWModel();
-			model.matrix = new MatrixStack().translate(x, y, z).rotate(entity.rotation()).getMatrix();
+			model.matrix = new MatrixStack().translate(x, y, z).rotate(entity.transform.rotation()).getMatrix();
 			((DynamicRenderer) entity).renderDynamic(model);
 			Tessellator.instance.startDrawingQuads();
 			model.render(Optional.of(renderManager));
