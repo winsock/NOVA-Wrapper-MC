@@ -1,7 +1,7 @@
 package nova.wrapper.mc1710.backward.gui;
 
 import net.minecraft.inventory.IInventory;
-import nova.core.gui.components.inventory.PlayerInventory;
+import nova.core.gui.component.inventory.PlayerInventory;
 import nova.core.gui.nativeimpl.NativePlayerInventory;
 import nova.core.gui.render.Graphics;
 import nova.core.util.transform.vector.Vector2i;

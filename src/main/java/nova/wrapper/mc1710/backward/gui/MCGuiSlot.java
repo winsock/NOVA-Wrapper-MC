@@ -5,7 +5,7 @@ import net.minecraft.client.gui.Gui;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
-import nova.core.gui.components.inventory.Slot;
+import nova.core.gui.component.inventory.Slot;
 import nova.core.gui.nativeimpl.NativeSlot;
 import nova.core.gui.render.Graphics;
 import nova.core.util.transform.vector.Vector2i;
