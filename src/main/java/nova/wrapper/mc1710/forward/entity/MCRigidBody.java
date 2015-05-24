@@ -1,10 +1,10 @@
 package nova.wrapper.mc1710.forward.entity;
 
+import nova.core.component.ComponentProvider;
 import nova.core.entity.Entity;
 import nova.core.entity.component.RigidBody;
 import nova.core.util.transform.matrix.Quaternion;
 import nova.core.util.transform.vector.Vector3d;
-import nova.core.world.component.ComponentProvider;
 
 /**
  * Based on the Euler Integration because Minecraft stores the following values:
