@@ -8,7 +8,7 @@ import nova.core.entity.EntityFactory;
 import nova.core.entity.EntityWrapper;
 import nova.core.retention.Data;
 import nova.core.retention.Storable;
-import nova.core.util.components.Updater;
+import nova.core.util.component.Updater;
 import nova.core.util.transform.matrix.Quaternion;
 import nova.core.util.transform.vector.Vector3d;
 import nova.wrapper.mc1710.backward.world.BWWorld;

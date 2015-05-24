@@ -32,7 +32,7 @@ import nova.core.game.Game;
 import nova.core.render.texture.Texture;
 import nova.core.retention.Storable;
 import nova.core.util.Direction;
-import nova.core.util.components.Updater;
+import nova.core.util.component.Updater;
 import nova.core.util.transform.matrix.MatrixStack;
 import nova.core.util.transform.shape.Cuboid;
 import nova.core.util.transform.vector.Vector3d;
