@@ -15,6 +15,7 @@
 # gradle
 !/build.gradle
 !/settings.gradle
+!/common.gradle
 !/gradle.properties
 !/gradlew*
 !/gradle

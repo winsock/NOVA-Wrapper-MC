@@ -1,0 +1,3 @@
+//The common gradle config file for every subproject.
+
+apply plugin: 'java'
