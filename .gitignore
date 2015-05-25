@@ -18,6 +18,7 @@
 !/gradle.properties
 !/gradlew*
 !/gradle
+.gradle/
 
 # checkstyle
 !/checkstyle*.xml
@@ -34,3 +35,6 @@
 ehthumbs.db
 Thumbs.db
 *~
+*.iws
+*.iml
+*.ipr

@@ -14,7 +14,7 @@ To set up NOVA Wrapper for Minecraft, use the standard procedure for setting up 
 
 1. Go into the directory of NOVA Wrapper
 2. Open command line and type "gradlew setupDecompWorkspace eclipse" or "gradlew setupDecompWorkspace idea"
-3. Let Gradle run dependencies. If you are using IntelliJ, a .ipr file should be generated. Open the ipr file and IntelliJ should open with the correct setup.
+3. Let Gradle run dependencies. If you are using IntelliJ, a .ipr file should be generated. Open the ipr file and IntelliJ should open with the correct set up.
 4. If you are trying to contribute to NOVA Core, you must also clone NOVA Core. In IntelliJ, add NOVA Core as a module dependency (and remove NOVA Core as a jar dependency) so you can edit the source code.
 
 ### Dependencies
