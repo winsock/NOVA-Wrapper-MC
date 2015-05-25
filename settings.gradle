@@ -1,6 +1,8 @@
-rootProject.name = "NovaWrapper-MC${properties["minecraft.version"]}"
+rootProject.name = "NovaWrapper-MC"
 
 if (hasProperty("nova.core.location")) {
 	include "NovaCore"
 	project(":NovaCore").projectDir = new File(properties["nova.core.location"])
 }
+
+include "core", "1.7.10"
