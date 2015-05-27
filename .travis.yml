@@ -13,7 +13,7 @@ install:
 script:
   - ./gradlew -Pnova.core.location=NovaCore/ --continue :${MODULE}:check :${MODULE}:javadoc :${MODULE}:jacocoTestReport
   - bash <(curl -s https://codecov.io/bash)
-  - rm ~/.gradle/**/*.lock
+  - find ~/.gradle/ -name *.lock -print0 | xargs rm -f
 
 cache:
   directories:
