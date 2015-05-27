@@ -5,7 +5,7 @@ sudo: false
 env:
   matrix:
     - MODULE=1.7.10
-    - MODULE=core
+#    - MODULE=core
 
 before_install: chmod +x gradlew
 install:
