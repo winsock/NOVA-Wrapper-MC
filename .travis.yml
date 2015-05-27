@@ -2,11 +2,16 @@ language: java
 jdk: oraclejdk8
 sudo: false
 
+env:
+  matrix:
+    - MODULE=1.7.10
+    - MODULE=core
+
 before_install: chmod +x gradlew
 install:
   - git clone https://github.com/NOVAAPI/NovaCore/
 script:
-  - ./gradlew -Pnova.core.location=NovaCore/ --continue check javadoc jacocoTestReport
+  - ./gradlew -Pnova.core.location=NovaCore/ --continue :${MODULE}:check :${MODULE}:javadoc :${MODULE}:jacocoTestReport
   - bash <(curl -s https://codecov.io/bash)
   - rm ~/.gradle/caches/modules-2/modules-2.lock
 
