@@ -4,6 +4,8 @@ include "1.7.10", "core"
 
 if (hasProperty("nova.core.location")) {
     include "NovaCore"
-    project(":NovaCore").projectDir = new File(properties["nova.core.location"])
+    def file = new File(properties["nova.core.location"])
+    if (!file.isDirectory()) throw new RuntimeException("nova.core.location $file does not exist")
+    project(":NovaCore").projectDir = file
 }
 
