@@ -1,5 +1,5 @@
-[![Build Status](https://img.shields.io/travis/NOVAAPI/NovaWrapper-MC.svg?style=flat-square)](https://travis-ci.org/NOVAAPI/NovaWrapper-MC)
-[![Coverage](https://img.shields.io/codecov/c/github/NOVAAPI/NovaWrapper-MC.svg?style=flat-square)](https://codecov.io/github/NOVAAPI/NovaWrapper-MC)
+[![Build Status](https://img.shields.io/travis/NOVA-Team/NOVA-Wrapper-MC.svg?style=flat-square)](https://travis-ci.org/NOVA-TEAM/NOVA-Wrapper-MC)
+[![Coverage](https://img.shields.io/codecov/c/github/NOVA-Team/NOVA-Wrapper-MC.svg?style=flat-square)](https://codecov.io/github/NOVA-Team/NOVA-Wrapper-MC)
 [![Tests](https://img.shields.io/jenkins/t/http/jenkins.magik6k.net/NovaWrapper-MC1.7.10.svg?style=flat-square)](http://jenkins.magik6k.net/job/NovaWrapper-MC1.7.10/lastCompletedBuild/testReport/)
 
 Nova API
