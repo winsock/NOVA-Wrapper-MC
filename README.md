@@ -17,8 +17,6 @@ To develop the NOVA wrapper or core, checkout the docs website for instructions 
 * JUnit
 * AssertJ
 
-Using the IDEA formatter
+Formatting
 ------------------------
-To use the formatter you find [here](https://github.com/NOVAAPI/NovaCore/tree/master/guidelines),
-start IntelliJ IDEA, go to `Files->Import Settings...`,
-select `guidelines/intelliJ-formatter.jar` and click `OK`.
+Any contributions should use the NOVA formatter. Instructions for applying to IDEA and Eclipse formatters can be found [here](http://novaapi.net/docs/NOVA%20Development/Formatting/).
