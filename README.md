@@ -9,21 +9,14 @@ NOVA is a voxel game modding framework designed to allow mods to be run across d
 NOVA Minecraft Wrapper is licensed under the LGPL v3 License.
 http://opensource.org/licenses/lgpl-3.0.html
 
-### Set Up
-To set up NOVA Wrapper for Minecraft, use the standard procedure for setting up a Forge mod.
-
-1. Go into the directory of NOVA Wrapper
-2. Open command line and type "gradlew setupDecompWorkspace eclipse" or "gradlew setupDecompWorkspace idea"
-3. Let Gradle run dependencies. If you are using IntelliJ, a .ipr file should be generated. Open the ipr file and IntelliJ should open with the correct set up.
-4. If you are trying to contribute to NOVA Core, you must also clone NOVA Core. In IntelliJ, add NOVA Core as a module dependency (and remove NOVA Core as a jar dependency) so you can edit the source code.
+### Setup
+To develop the NOVA wrapper or core, checkout the docs website for instructions on [setting up a workspace](http://novaapi.net/docs/NOVA%20Development/Development%20Workspace%20Setup/).
 
 ### Dependencies
 * Guice
 * JUnit
 * AssertJ
 
-Using the IDEA formatter
+Formatting
 ------------------------
-To use the formatter you find [here](https://github.com/NOVAAPI/NovaCore/tree/master/guidelines),
-start IntelliJ IDEA, go to `Files->Import Settings...`,
-select `guidelines/intelliJ-formatter.jar` and click `OK`.
+Any contributions should use the NOVA formatter. Instructions for applying to IDEA and Eclipse formatters can be found [here](http://novaapi.net/docs/NOVA%20Development/Formatting/).
