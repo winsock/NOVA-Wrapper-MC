@@ -15,7 +15,7 @@ script:
   - bash <(curl -s https://codecov.io/bash)
 
 before_cache:
-  - find ~/.gradle/ -maxdepth 1 -type d -not -name 'caches' -not -name 'wrapper' -not -name '.' -exec rm -vRf {}
+  - find ~/.gradle/ -maxdepth 1 -type d -not -name 'caches' -not -name 'wrapper' -not -name '.' -exec rm -vRf {} \;
   - find ~/.gradle/ -type f -name *.lock -delete
 cache:
   directories:
