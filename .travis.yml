@@ -17,6 +17,7 @@ script:
 before_cache:
   - cd ~/.gradle; find . -maxdepth 1 -type d -not -name 'caches' -not -name 'wrapper' -not -name '.' -exec rm -vRf {} \;;cd -
   - find ~/.gradle/ -type f -name *.lock -delete
+  - rm -Rf ~/.gradle/caches/*/scripts
 cache:
   directories:
   - ~/.gradle
