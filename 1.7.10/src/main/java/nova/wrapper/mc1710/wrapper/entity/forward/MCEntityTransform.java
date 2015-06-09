@@ -2,12 +2,13 @@ package nova.wrapper.mc1710.wrapper.entity.forward;
 
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraftforge.common.DimensionManager;
-import nova.core.component.ComponentProvider;
 import nova.core.component.transform.EntityTransform;
-import nova.core.util.transform.matrix.Quaternion;
-import nova.core.util.transform.vector.Vector3d;
+import nova.core.util.math.RotationUtil;
+import nova.core.util.math.Vector3DUtil;
 import nova.core.world.World;
 import nova.wrapper.mc1710.wrapper.block.world.BWWorld;
+import org.apache.commons.math3.geometry.euclidean.threed.Rotation;
+import org.apache.commons.math3.geometry.euclidean.threed.Vector3D;
 
 import java.util.Arrays;
 
@@ -20,8 +21,8 @@ public class MCEntityTransform extends EntityTransform {
 
 	public MCEntityTransform(net.minecraft.entity.Entity wrapper) {
 		this.wrapper = wrapper;
-		this.setPivot(Vector3d.zero);
-		this.setScale(Vector3d.one);
+		this.setPivot(Vector3D.ZERO);
+		this.setScale(Vector3DUtil.ONE);
 	}
 
 	@Override
@@ -42,30 +43,30 @@ public class MCEntityTransform extends EntityTransform {
 	}
 
 	@Override
-	public Vector3d position() {
-		return new Vector3d(wrapper.posX, wrapper.posY, wrapper.posZ);
+	public Vector3D position() {
+		return new Vector3D(wrapper.posX, wrapper.posY, wrapper.posZ);
 	}
 
 	@Override
-	public void setPosition(Vector3d position) {
+	public void setPosition(Vector3D position) {
 		if (wrapper instanceof EntityPlayerMP) {
-			((EntityPlayerMP) wrapper).playerNetServerHandler.setPlayerLocation(position.x, position.y, position.z, wrapper.rotationYaw, wrapper.rotationPitch);
+			((EntityPlayerMP) wrapper).playerNetServerHandler.setPlayerLocation(position.getX(), position.getY(), position.getZ(), wrapper.rotationYaw, wrapper.rotationPitch);
 		} else {
-			wrapper.posX = position.x;
-			wrapper.posY = position.y;
-			wrapper.posZ = position.z;
+			wrapper.posX = position.getX();
+			wrapper.posY = position.getY();
+			wrapper.posZ = position.getZ();
 		}
 	}
 
 	@Override
-	public Quaternion rotation() {
-		return Quaternion.fromEuler(-Math.toRadians(wrapper.rotationYaw) - Math.PI, -Math.toRadians(wrapper.rotationPitch));
+	public Rotation rotation() {
+		return new Rotation(RotationUtil.DEFAULT_ORDER, -Math.toRadians(wrapper.rotationYaw) - Math.PI, -Math.toRadians(wrapper.rotationPitch), 0);
 	}
 
 	@Override
-	public void setRotation(Quaternion rotation) {
-		Vector3d euler = rotation.toEuler();
-		wrapper.rotationYaw = (float) Math.toDegrees(euler.x);
-		wrapper.rotationPitch = (float) Math.toDegrees(euler.y);
+	public void setRotation(Rotation rotation) {
+		double[] euler = rotation.getAngles(RotationUtil.DEFAULT_ORDER);
+		wrapper.rotationYaw = (float) Math.toDegrees(euler[0]);
+		wrapper.rotationPitch = (float) Math.toDegrees(euler[1]);
 	}
 }

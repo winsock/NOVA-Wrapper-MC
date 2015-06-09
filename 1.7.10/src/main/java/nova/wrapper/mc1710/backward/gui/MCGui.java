@@ -11,7 +11,6 @@ import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.ItemStack;
-import nova.internal.core.Game;
 import nova.core.gui.Gui;
 import nova.core.gui.GuiComponent;
 import nova.core.gui.GuiEvent.MouseEvent.EnumMouseButton;
@@ -21,10 +20,11 @@ import nova.core.gui.render.Canvas;
 import nova.core.gui.render.Graphics;
 import nova.core.gui.render.text.TextMetrics;
 import nova.core.network.Packet;
-import nova.core.util.transform.vector.Vector2i;
+import nova.internal.core.Game;
 import nova.wrapper.mc1710.backward.gui.text.MCTextRenderer;
 import nova.wrapper.mc1710.network.discriminator.PacketGui;
 import nova.wrapper.mc1710.network.netty.MCNetworkManager;
+import org.apache.commons.math3.geometry.euclidean.twod.Vector2D;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.GL11;
 
@@ -32,7 +32,6 @@ import java.util.Optional;
 
 /**
  * Minecraft implementation of the NOVA GUI System
- *
  * @author Vic Nightfall
  */
 public class MCGui extends MCGuiContainer implements NativeGui, DrawableGuiComponent {
@@ -118,14 +117,14 @@ public class MCGui extends MCGuiContainer implements NativeGui, DrawableGuiCompo
 
 		Canvas canvas = graphics.getCanvas();
 
-		Optional<Vector2i> preferredSize = getComponent().getPreferredSize();
+		Optional<Vector2D> preferredSize = getComponent().getPreferredSize();
 		if (preferredSize.isPresent()) {
 			// We have a preferred size so we can draw our fancy gray
 			// background.
 
-			Vector2i size = getOutline().getDimension();
-			Vector2i position = getOutline().getPosition();
-			GuiUtils.drawGUIWindow(position.x - 4, position.y - 4, size.xi() + 8, size.yi() + 8);
+			Vector2D size = getOutline().getDimension();
+			Vector2D position = getOutline().getPosition();
+			GuiUtils.drawGUIWindow((int) position.getX() - 4, (int) position.getY() - 4, (int) size.getX() + 8, (int) size.getY() + 8);
 		}
 
 		Outline guiOutline = getOutline();
@@ -229,8 +228,9 @@ public class MCGui extends MCGuiContainer implements NativeGui, DrawableGuiCompo
 			int key = Keyboard.getEventKey();
 			char ch = Keyboard.getEventCharacter();
 			onKeyPressed(Game.input().getKey(key), ch, state);
-			if (state)
+			if (state) {
 				keyTyped(ch, key);
+			}
 
 			this.mc.func_152348_aa();
 		}
@@ -246,8 +246,9 @@ public class MCGui extends MCGuiContainer implements NativeGui, DrawableGuiCompo
 
 			fontRendererObj = mc.fontRenderer;
 			MCCanvas canvas = new MCCanvas(width, height, Tessellator.instance, scaledresolution.getScaleFactor());
-			if (textRenderer == null)
+			if (textRenderer == null) {
 				textRenderer = new MCTextRenderer(fontRendererObj, canvas);
+			}
 
 			textRenderer.setCanvas(canvas);
 			graphics = new Graphics(canvas, textRenderer);
@@ -257,13 +258,13 @@ public class MCGui extends MCGuiContainer implements NativeGui, DrawableGuiCompo
 			outline = new Outline(0, 0, width, height);
 
 			if (resized) {
-				Optional<Vector2i> preferredSize = getComponent().getPreferredSize();
+				Optional<Vector2D> preferredSize = getComponent().getPreferredSize();
 				if (preferredSize.isPresent()) {
 					// Set the size to the preferred size and center the GUI
-					Vector2i size = preferredSize.get();
-					int xOffset = width / 2 - size.xi() / 2;
-					int yOffset = height / 2 - size.yi() / 2;
-					setOutline(getOutline().setPosition(new Vector2i(xOffset, yOffset)).setDimension(size));
+					Vector2D size = preferredSize.get();
+					int xOffset = (int) (width / 2 - size.getX() / 2);
+					int yOffset = (int) (height / 2 - size.getY() / 2);
+					setOutline(getOutline().setPosition(new Vector2D(xOffset, yOffset)).setDimension(size));
 				}
 				onResized(oldOutline);
 			}

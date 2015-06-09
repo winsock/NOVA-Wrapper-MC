@@ -9,16 +9,11 @@ import net.minecraft.world.IBlockAccess;
 import nova.core.render.model.Model;
 import nova.core.render.texture.EntityTexture;
 import nova.core.render.texture.Texture;
-import nova.core.util.transform.vector.Vector3i;
+import nova.core.util.math.Vector3DUtil;
 import nova.wrapper.mc1710.render.RenderUtility;
-import org.lwjgl.opengl.GL11;
+import org.apache.commons.math3.geometry.euclidean.threed.Vector3D;
 
 import java.util.Optional;
-
-import static org.lwjgl.opengl.GL11.GL_BLEND;
-import static org.lwjgl.opengl.GL11.GL_SMOOTH;
-import static org.lwjgl.opengl.GL11.glEnable;
-import static org.lwjgl.opengl.GL11.glShadeModel;
 
 /**
  * @author Calclavia
@@ -44,17 +39,17 @@ public class BWModel extends Model {
 						tessellator.setBrightness((int) (face.getBrightness() * (15 << 20 | 11 << 4)));
 					} else {
 						// Determine nearest adjacent block.
-						Vector3i nearestPos = face.getCenter().add(face.normal.divide(2)).floor();
-						Block block = blockAccess.getBlock(nearestPos.x, nearestPos.y, nearestPos.z);
+						Vector3D nearestPos = Vector3DUtil.floor(face.getCenter().add(face.normal.scalarMultiply(0.6))); // 0.6 so down rounding doesn't get us.
+						Block block = blockAccess.getBlock((int) nearestPos.getX(), (int) nearestPos.getY(), (int) nearestPos.getZ());
 						try {
-							int brightness = block.getMixedBrightnessForBlock(blockAccess, nearestPos.x, nearestPos.y, nearestPos.z);
+							int brightness = block.getMixedBrightnessForBlock(blockAccess, (int) nearestPos.getX(), (int) nearestPos.getY(), (int) nearestPos.getZ());
 
 							// TODO: Add Ambient Occlusion
 
-							/*int aoBrightnessXYNN = block.getMixedBrightnessForBlock(blockAccess, translation.xi() - 1, translation.yi(), translation.zi());
-							int aoBrightnessYZNN = block.getMixedBrightnessForBlock(blockAccess, translation.xi(), translation.yi(), translation.zi() - 1);
-							int aoBrightnessYZNP = block.getMixedBrightnessForBlock(blockAccess, translation.xi(), translation.yi(), translation.zi() + 1);
-							int aoBrightnessXYPN = block.getMixedBrightnessForBlock(blockAccess, translation.xi() + 1, translation.yi(), translation.zi());
+							/*int aoBrightnessXYNN = block.getMixedBrightnessForBlock(blockAccess, translation.getX() - 1, translation.getY(), translation.zi());
+							int aoBrightnessYZNN = block.getMixedBrightnessForBlock(blockAccess, translation.getX(), translation.getY(), translation.zi() - 1);
+							int aoBrightnessYZNP = block.getMixedBrightnessForBlock(blockAccess, translation.getX(), translation.getY(), translation.zi() + 1);
+							int aoBrightnessXYPN = block.getMixedBrightnessForBlock(blockAccess, translation.getX() + 1, translation.getY(), translation.zi());
 
 							int brightnessTopLeft = getAoBrightness(aoBrightnessXYZNNP, this.aoBrightnessXYNN, this.aoBrightnessYZNP, i1);
 							int brightnessTopRight = getAoBrightness(aoBrightnessYZNP, this.aoBrightnessXYZPNP, this.aoBrightnessXYPN, i1);
@@ -69,19 +64,19 @@ public class BWModel extends Model {
 						// TODO: Remove this
 						// tessellator.setBrightness(15 << 20 | 11 << 4);
 					}
-					tessellator.setNormal(face.normal.xf(), face.normal.yf(), face.normal.zf());
+					tessellator.setNormal((int) face.normal.getX(), (int) face.normal.getY(), (int) face.normal.getZ());
 
 					if (face.texture.isPresent()) {
 						Texture texture = face.texture.get();
 						IIcon icon = RenderUtility.instance.getIcon(texture);
 						face.vertices.forEach(v -> {
 							tessellator.setColorRGBA(v.color.red(), v.color.green(), v.color.blue(), v.color.alpha());
-							tessellator.addVertexWithUV(v.vec.x, v.vec.y, v.vec.z, icon.getInterpolatedU(16 * v.uv.x), icon.getInterpolatedV(16 * v.uv.y));
+							tessellator.addVertexWithUV(v.vec.getX(), v.vec.getY(), v.vec.getZ(), icon.getInterpolatedU(16 * v.uv.getX()), icon.getInterpolatedV(16 * v.uv.getY()));
 						});
 					} else {
 						face.vertices.forEach(v -> {
 							tessellator.setColorRGBA(v.color.red(), v.color.green(), v.color.blue(), v.color.alpha());
-							tessellator.addVertex(v.vec.x, v.vec.y, v.vec.z);
+							tessellator.addVertex(v.vec.getX(), v.vec.getY(), v.vec.getZ());
 						});
 					}
 				})
@@ -113,7 +108,7 @@ public class BWModel extends Model {
 						tessellator.setBrightness(15 << 20 | 11 << 4);
 					}
 
-					tessellator.setNormal(face.normal.xf(), face.normal.yf(), face.normal.zf());
+					tessellator.setNormal((int) face.normal.getX(), (int) face.normal.getY(), (int) face.normal.getZ());
 
 					if (face.texture.isPresent()) {
 						if (entityRenderManager.isPresent()) {
@@ -128,15 +123,15 @@ public class BWModel extends Model {
 						face.vertices.forEach(v -> {
 							tessellator.setColorRGBA(v.color.red(), v.color.green(), v.color.blue(), v.color.alpha());
 							if (icon != null) {
-								tessellator.addVertexWithUV(v.vec.x, v.vec.y, v.vec.z, icon.getInterpolatedU(16 * v.uv.x), icon.getInterpolatedV(16 * v.uv.y));
+								tessellator.addVertexWithUV(v.vec.getX(), v.vec.getY(), v.vec.getZ(), icon.getInterpolatedU(16 * v.uv.getX()), icon.getInterpolatedV(16 * v.uv.getY()));
 							} else {
-								tessellator.addVertexWithUV(v.vec.x, v.vec.y, v.vec.z, v.uv.x, v.uv.y);
+								tessellator.addVertexWithUV(v.vec.getX(), v.vec.getY(), v.vec.getZ(), v.uv.getX(), v.uv.getY());
 							}
 						});
 					} else {
 						face.vertices.forEach(v -> {
 							tessellator.setColorRGBA(v.color.red(), v.color.green(), v.color.blue(), v.color.alpha());
-							tessellator.addVertex(v.vec.x, v.vec.y, v.vec.z);
+							tessellator.addVertex(v.vec.getX(), v.vec.getY(), v.vec.getZ());
 						});
 					}
 				});
