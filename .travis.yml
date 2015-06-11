@@ -13,6 +13,7 @@ install:
   - git clone -b $TRAVIS_BRANCH https://github.com/NOVAAPI/NovaCore/ || git clone https://github.com/NOVAAPI/NovaCore/
 script:
   - ./gradlew -Pnova.core.location=NovaCore/ --continue :${MODULE}:check :${MODULE}:javadoc :${MODULE}:jacocoTestReport
+after_success:
   - bash <(curl -s https://codecov.io/bash)
 
 before_cache:
