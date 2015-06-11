@@ -5,7 +5,6 @@ import cpw.mods.fml.common.FMLCommonHandler;
 import cpw.mods.fml.common.registry.GameRegistry;
 import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.item.ItemStack;
-import nova.core.block.BlockFactory;
 import nova.core.component.Category;
 import nova.core.item.Item;
 import nova.core.item.ItemBlock;

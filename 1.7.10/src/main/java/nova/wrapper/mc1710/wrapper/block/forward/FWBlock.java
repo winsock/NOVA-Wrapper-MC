@@ -20,7 +20,6 @@ import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 import net.minecraftforge.client.IItemRenderer;
 import nova.core.block.Block;
-import nova.core.block.BlockFactory;
 import nova.core.block.Stateful;
 import nova.core.block.component.LightEmitter;
 import nova.core.block.component.StaticBlockRenderer;

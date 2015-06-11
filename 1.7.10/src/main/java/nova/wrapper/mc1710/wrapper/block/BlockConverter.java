@@ -6,7 +6,6 @@ import net.minecraft.creativetab.CreativeTabs;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
 import nova.core.block.Block;
-import nova.core.block.BlockFactory;
 import nova.core.block.BlockManager;
 import nova.core.component.Category;
 import nova.internal.core.Game;
