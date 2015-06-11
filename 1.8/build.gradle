@@ -24,16 +24,16 @@ compileTestJava {
 }
 
 runClient {
-	jvmArgs '-Dfml.coreMods.load=nova.wrapper.mc1710.NovaMinecraftCore'
+	jvmArgs '-Dfml.coreMods.load=nova.wrapper.mc18.NovaMinecraftCore'
 }
 runServer {
-	jvmArgs '-Dfml.coreMods.load=nova.wrapper.mc1710.NovaMinecraftCore'
+	jvmArgs '-Dfml.coreMods.load=nova.wrapper.mc18.NovaMinecraftCore'
 }
 
 jar {
 	from project(':core').sourceSets.main.output
 	manifest {
-		attributes 'FMLCorePlugin': 'nova.wrapper.mc1710.NovaMinecraftCore'
+		attributes 'FMLCorePlugin': 'nova.wrapper.mc18.NovaMinecraftCore'
 		attributes 'FMLCorePluginContainsFMLMod': 'true'
 	}
 }
@@ -70,8 +70,8 @@ task deobfJar(type: Jar) {
 shadowJar {
 	manifest {
 		attributes("Implementation-Title": project.name,
-		           "Implementation-Version": version,
-		           "Specification-Title": "NovaCore")
+			"Implementation-Version": version,
+			"Specification-Title": "NovaCore")
 	}
 }
 
@@ -83,15 +83,15 @@ publishing {
 	publications {
 		main(MavenPublication) {
 			from components.java
-			
-			artifactId "NovaWrapper-MC1.7.10"
+
+			artifactId "NovaWrapper-MC1.8"
 
 			artifact sourcesJar
 			artifact deobfJar
 			artifact javadocJar
 
 			pom.withXml(writePom(project.properties))
-			pom.withXml { xml ->
+			pom.withXml {xml ->
 				def children = xml.asNode().get("dependencies")[0]
 				for (child in children) {
 					def artifactId = child.get("artifactId")[0].value()[0]
