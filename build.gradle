@@ -50,7 +50,6 @@ subprojects {
 	// Add plugins to classpath on every subproject
 	buildscript {
 		dependencies {
-			classpath 'net.minecraftforge.gradle:ForgeGradle:1.2-SNAPSHOT'
 			classpath 'us.phildop:gradle-sublimetext-plugin:0.5.3'
 			classpath 'com.github.jengelman.gradle.plugins:shadow:1.2.0'
 		}
