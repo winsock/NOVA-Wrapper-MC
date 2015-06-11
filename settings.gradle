@@ -1,6 +1,6 @@
 rootProject.name = "NovaWrapper-MC"
 
-include "1.7.10", "core"
+include "core", "1.7.10", "1.8"
 
 if (hasProperty("nova.core.location")) {
     include "NovaCore"
