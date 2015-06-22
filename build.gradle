@@ -74,13 +74,6 @@ subprojects {
 		}
 	}
 
-	compileJava {
-		sourceCompatibility = '1.8'
-		options.encoding = 'UTF-8'
-		options.fork = true
-		//options.compilerArgs << '-Xlint'
-	}
-
 	// Artifacts needed for every project
 	task sourcesJar(type: Jar, dependsOn: classes) {
 		from sourceSets.main.allSource
