@@ -1,116 +1,26 @@
-buildscript { // Bootstrap classpath for the root project
-	repositories { maven { url 'http://maven.novaapi.net/' } }
-	dependencies { classpath 'us.phildop:gradle-sublimetext-plugin:0.5.3' }
-}
-
-allprojects {
-	// We should never modify NovaCore because it is meant to be a standalone project.
-	if (project.name == "NovaCore") return
-
-	// Add all the repositories
-	buildscript {
-		repositories {
-			mavenCentral()
-			jcenter()
-			maven {
-				name "forge"
-				url "http://files.minecraftforge.net/maven"
-			}
-			maven {
-				name "sonatype"
-				url "https://oss.sonatype.org/content/repositories/snapshots/"
-			}
-			maven {
-				name "nova"
-				url 'http://maven.novaapi.net/'
-			}
+buildscript{
+	repositories{
+		mavenCentral()
+		maven {
+			name "forge"
+			url "http://files.minecraftforge.net/maven"
+		}
+		maven {
+			name "sonatype"
+			url "https://oss.sonatype.org/content/repositories/snapshots/"
 		}
 	}
-
-	// Basic ide plugin setup on every project
-	apply plugin: 'sublimeText'
-	apply plugin: 'eclipse'
-	apply plugin: 'idea'
-
-	sublimeText {
-		defaultFileExcludePatterns = ['.project', '.classpath', '.pydevproject']
-		defaultFolderExcludePatterns = ['.gradle', 'bin', 'build', '.settings']
-		generateSublimeJavaClasspath = true
-		generateSublimeJavaSrcpath = true
-		addGradleCompile = true
+	dependencies {
+		classpath 'net.minecraftforge.gradle:ForgeGradle:1.2-SNAPSHOT'
 	}
-
-	idea.project?.languageLevel = "1.8"
 }
+
+apply plugin: 'eclipse'
+apply plugin: 'idea'
 
 subprojects {
 	// We should never modify NovaCore because it is meant to be a standalone project.
 	if (project.name == "NovaCore") return
 
-	// Add plugins to classpath on every subproject
-	buildscript {
-		dependencies {
-			classpath 'us.phildop:gradle-sublimetext-plugin:0.5.3'
-			classpath 'com.github.jengelman.gradle.plugins:shadow:1.2.0'
-		}
-	}
-
-	// Plugins relevant to any project
-	apply from: "https://raw.githubusercontent.com/NOVAAPI/NovaCore/5f4dafcc36bfbdff13edd355b70c18842b439a91/gradle/modules/utils.gradle"
-	apply plugin: 'java'
-
-	apply plugin: 'jacoco'
-
-	configurations.all {
-		resolutionStrategy.cacheChangingModulesFor 5, 'minutes'
-	}
-
-	// All needed repositories
-	repositories {
-		mavenLocal()
-		mavenCentral()
-		maven {
-			url 'http://maven.novaapi.net/'
-		}
-	}
-
-	// Artifacts needed for every project
-	task sourcesJar(type: Jar, dependsOn: classes) {
-		from sourceSets.main.allSource
-		classifier = 'sources'
-	}
-
-	task javadocJar(type: Jar, dependsOn: javadoc) {
-		from javadoc.destinationDir
-		classifier = 'javadoc'
-	}
-
-	artifacts {
-		archives sourcesJar
-		archives javadocJar
-	}
-
-	// Every project should have a test configuration
-	jacocoTestReport {
-		reports {
-			xml.enabled = true // coveralls plugin depends on xml format report
-			html.enabled = true
-		}
-	}
-
-	test {
-		forkEvery = 1
-		maxParallelForks = 4
-
-		testLogging {
-			exceptionFormat = 'full'
-		}
-
-		testLogging.showStandardStreams = true
-
-		beforeTest { descriptor ->
-			def classPadded = String.format("%-50s", descriptor.className)
-			logger.lifecycle("Running test ${classPadded} ${descriptor.name}()")
-		}
-	}
+	apply from: "https://raw.githubusercontent.com/NOVA-Team/NOVA-Gradle/master/shared-scripts/java.gradle"
 }
